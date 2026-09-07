@@ -116,10 +116,17 @@ if ($action === 'resolve') {
 
     $room = $rooms[$code];
     $urls = [];
-    if (($room['publicUrl'] ?? '') !== '') $urls[] = $room['publicUrl'];
-    foreach ($room['addrs'] as $a) $urls[] = "http://{$a}:{$room['port']}/";
-    if ($room['publicIp'] !== '' && !in_array($room['publicIp'], $room['addrs'], true))
-        $urls[] = "http://{$room['publicIp']}:{$room['port']}/";
+    // When the room is reachable over the relay/tunnel, hand out ONLY that URL. The raw LAN
+    // and public-IP fallbacks are useless to a remote player AND leak the host's home IP to
+    // anyone who guesses a 4-char room code (deanonymisation + a direct attack target), so
+    // they are exposed only for a genuinely LAN-only game with no public URL (2026-09-07).
+    if (($room['publicUrl'] ?? '') !== '') {
+        $urls[] = $room['publicUrl'];
+    } else {
+        foreach ($room['addrs'] as $a) $urls[] = "http://{$a}:{$room['port']}/";
+        if ($room['publicIp'] !== '' && !in_array($room['publicIp'], $room['addrs'], true))
+            $urls[] = "http://{$room['publicIp']}:{$room['port']}/";
+    }
 
     // NOTE: no version echo — the game's build number doubles as its GM console key
     // (2026-08-10), so resolve must not publish it. It stays stored for CJ's own eyes.
