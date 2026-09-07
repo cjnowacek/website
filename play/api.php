@@ -53,9 +53,56 @@ function save_rooms(string $file, array $rooms): void
     fclose($fp);
 }
 
+// ── Rate limiting (2026-09-07) ───────────────────────────────────────────────
+// Defence in depth: keep any one IP from hammering the directory — brute-forcing the
+// (strong) secret on the POST actions, or enumerating 4-char room codes through resolve.
+// A tiny fixed-window counter per (bucket, IP) in a file under tt-data, pruned as it goes.
+// Generous enough never to trip the 60-second host heartbeat.
+function client_ip(): string
+{
+    $xff = $_SERVER['HTTP_X_FORWARDED_FOR'] ?? '';   // Caddy sets this; take the first hop
+    if ($xff !== '') { $ip = trim(explode(',', $xff)[0]); if ($ip !== '') return $ip; }
+    return $_SERVER['REMOTE_ADDR'] ?? '0.0.0.0';
+}
+
+function rate_limit(string $dataDir, string $bucket, int $max, int $windowSec): void
+{
+    $dir = $dataDir . '/rl';
+    if (!is_dir($dir)) @mkdir($dir, 0700, true);
+    $file = $dir . '/' . $bucket . '.json';
+    $now = time();
+    $ip = client_ip();
+
+    $fp = @fopen($file, 'c+');
+    if ($fp === false) return;   // never let the limiter itself take the endpoint down
+    if (!flock($fp, LOCK_EX)) { fclose($fp); return; }
+    $raw = stream_get_contents($fp);
+    $map = json_decode($raw ?: '[]', true);
+    if (!is_array($map)) $map = [];
+
+    // Prune windows that have rolled over (keeps the file from growing unbounded).
+    foreach ($map as $k => $v) {
+        if (($v['start'] ?? 0) + $windowSec <= $now) unset($map[$k]);
+    }
+    $rec = $map[$ip] ?? ['start' => $now, 'n' => 0];
+    if ($rec['start'] + $windowSec <= $now) $rec = ['start' => $now, 'n' => 0];
+    $rec['n']++;
+    $map[$ip] = $rec;
+
+    ftruncate($fp, 0); rewind($fp);
+    fwrite($fp, json_encode($map));
+    fflush($fp); flock($fp, LOCK_UN); fclose($fp);
+
+    if ($rec['n'] > $max) {
+        header('Retry-After: ' . $windowSec);
+        fail(429, 'too many requests — slow down');
+    }
+}
+
 $action = $_GET['action'] ?? '';
 
 if ($action === 'register') {
+    rate_limit($dataDir, 'register', 30, 60);   // ~1 host/60s; headroom for retries
     if ($_SERVER['REQUEST_METHOD'] !== 'POST') fail(405, 'POST required');
 
     if (!is_file($secretFile)) fail(503, 'directory not provisioned');
@@ -108,6 +155,7 @@ if ($action === 'register') {
 }
 
 if ($action === 'resolve') {
+    rate_limit($dataDir, 'resolve', 40, 60);   // room-code enumeration guard
     $code = strtoupper(trim((string)($_GET['room'] ?? '')));
     if (!preg_match(ROOM_PATTERN, $code)) fail(400, 'bad room code');
 
@@ -164,6 +212,7 @@ function read_body(): array
 }
 
 if ($action === 'record') {
+    rate_limit($dataDir, 'record', 60, 60);
     $body = read_body();
     require_secret($secretFile, $body);
     $id = (string)($body['game'] ?? '');
@@ -217,6 +266,7 @@ if ($action === 'record') {
 }
 
 if ($action === 'games') {
+    rate_limit($dataDir, 'reads', 30, 60);
     $body = read_body();
     require_secret($secretFile, $body);
     $out = [];
@@ -237,6 +287,7 @@ if ($action === 'games') {
 }
 
 if ($action === 'game') {
+    rate_limit($dataDir, 'reads', 30, 60);
     $body = read_body();
     require_secret($secretFile, $body);
     $id = (string)($body['game'] ?? '');
