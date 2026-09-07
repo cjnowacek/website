@@ -79,10 +79,12 @@ if ($action === 'register') {
     }
 
     // Tunnel URL — reachable from anywhere, so resolve serves it first. Strictly
-    // validated (it lands in a redirect on the join page): either our own frp vhost
-    // (ROOM.play.cjnowacek.com, since 2026-08-12) or a legacy cloudflared quick tunnel.
+    // validated (it lands in a redirect on the join page): the relay PATH form
+    // (play.cjnowacek.com/ROOM, 2026-09-07 — one cert for every room), the older frp
+    // subdomain (ROOM.play.cjnowacek.com), or a legacy cloudflared quick tunnel.
     $publicUrl = (string)($body['publicUrl'] ?? '');
     if ($publicUrl !== ''
+        && !preg_match('#^https://play\.cjnowacek\.com/[A-Z2-9]{4,8}/?$#', $publicUrl)
         && !preg_match('#^https://[a-z0-9-]+\.play\.cjnowacek\.com/?$#', $publicUrl)
         && !preg_match('#^https://[a-z0-9.-]+\.trycloudflare\.com/?$#', $publicUrl)) {
         $publicUrl = '';
