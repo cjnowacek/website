@@ -45,3 +45,8 @@ RewriteRule ^(.*/)?index\.php$ /$1 [R=301,L]
 # /foo.php -> /foo (old flat pages: about.php, contact.php, techart.php, ...)
 RewriteCond %{THE_REQUEST} \s/+([^.?\s]+)\.php[\s?]
 RewriteRule ^ /%1 [R=301,L]
+
+# /notes -> the vault served by Cairn's engine on the droplet (zk-engine,
+# tools/notes-vps-setup.sh). A redirect rather than a proxy: this host is
+# static Apache, and the app has its own login.
+RewriteRule ^notes/?$ https://notes.cjnowacek.com/ [R=302,L]
