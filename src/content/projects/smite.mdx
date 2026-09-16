@@ -20,6 +20,8 @@ meta:
   platforms: PC, Console
   team_size: 200+ developers
 ---
+import ProjectGrid from '../../components/ProjectGrid.astro';
+
 
 <div class="about-text" style="max-width: 800px; margin: 0 auto 40px auto; text-align: left;">
 
@@ -62,55 +64,7 @@ My primary focus was streamlining the character production workflow, particularl
 
 ## Featured Projects
 
-<div class="projects-container projects-container-grid">
-  <div class="project-card">
-    <div class="project-media">
-      <img src="/static/img/project-cards/skinExporter-webp-1200x900.webp" alt="Envelope Export Tool" loading="lazy" />
-      <img class="hover-gif" src="/static/img/project-cards/skinExporter-webp-1200x900.webp" alt="Envelope Export Tool GIF" loading="lazy" />
-    </div>
-    <div class="project-info-card">
-      <h3>Envelope Export Tool</h3>
-      <p class="project-company">Hi-Rez Studios</p>
-      <p class="project-description-card">MaxScript tool for exporting mesh envelopes and importing skinning data. Streamlines the workflow for transferring skin weights between files in 3ds Max.</p>
-      <div class="project-highlights">
-        <strong>Key Contributions:</strong>
-        <ul>
-          <li>Automated envelope extraction from existing meshes</li>
-          <li>Simplified skin weight transfer workflow</li>
-        </ul>
-      </div>
-      <div class="tech-tags">
-        <span class="tech-tag">3D Studio Max</span>
-        <span class="tech-tag">MaxScript</span>
-      </div>
-      <a href="/techart/smite/envelope-tool" class="project-link">View Project Details</a>
-    </div>
-  </div>
-  <div class="project-card">
-    <div class="project-media">
-      <img src="/static/img/project-cards/gravitySwitch-webp-1200x900.webp" alt="Gravity Switch Rig" loading="lazy" />
-      <img class="hover-gif" src="/static/img/project-cards/gravitySwitch-webp-1200x900.gif" alt="Gravity Switch Rig GIF" loading="lazy" />
-    </div>
-    <div class="project-info-card">
-      <h3>Gravity Switch Rig</h3>
-      <p class="project-company">Hi-Rez Studios</p>
-      <p class="project-description-card">Gravity simulation rigging system using orient and aim constraints. Enables dynamic directional gravity effects for character animation in Smite.</p>
-      <div class="project-highlights">
-        <strong>Key Contributions:</strong>
-        <ul>
-          <li>Dynamic gravity direction simulation using constraints</li>
-          <li>Seamless integration with existing character rigs</li>
-        </ul>
-      </div>
-      <div class="tech-tags">
-        <span class="tech-tag">3D Studio Max</span>
-        <span class="tech-tag">Rigging</span>
-        <span class="tech-tag">Animation</span>
-      </div>
-      <a href="/techart/smite/gravity-switch" class="project-link">View Project Details</a>
-    </div>
-  </div>
-</div>
+<ProjectGrid ids={['smite/envelope-tool', 'smite/gravity-switch']} />
 
 <div class="about-text" style="max-width: 800px; margin: 0 auto 40px auto; text-align: left;">
 
