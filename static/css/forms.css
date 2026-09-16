@@ -47,7 +47,7 @@
 
 .submit-btn {
     background-color: var(--header-color);
-    color: white;
+    color: var(--on-accent);
     border: none;
     padding: 12px 30px;
     border-radius: 5px;
@@ -59,6 +59,7 @@
 
 .submit-btn:hover {
     background-color: var(--subheader-color);
+    color: white;
 }
 
 .submit-btn:disabled {

@@ -35,7 +35,7 @@ const techartProjects = await getProjectCards(['smite', 'runaway']);
 
     <h2>Featured Projects</h2>
 
-    <div class="projects-container project-rows">
+    <div class="projects-container projects-container-grid">
       {techartProjects.map((project) => <ProjectCard project={project} />)}
     </div>
   </div>

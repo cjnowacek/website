@@ -37,18 +37,24 @@ const year = new Date().getFullYear();
     />
   </head>
   <body>
-    <div class="title__container">
+    <a class="skip-link" href="#main">Skip to content</a>
+    <header class="title__container">
       <h1><a href="/" style="color: inherit; text-decoration: none;">{siteName}</a></h1>
-      <nav>
+      <nav aria-label="Main">
         {navItems.map(([href, label]) => (
-          <a href={href} class={isActive(href) ? 'active' : undefined}>{label}</a>
+          <a
+            href={href}
+            class={isActive(href) ? 'active' : undefined}
+            aria-current={isActive(href) ? 'page' : undefined}>{label}</a>
         ))}
       </nav>
-    </div>
+    </header>
 
-    <slot />
+    <main id="main">
+      <slot />
+    </main>
 
-    <div class="site-footer">
+    <footer class="site-footer">
       <p class="footer-links">
         <a href={socialLinks.github} target="_blank" rel="noopener"><i class="fa-brands fa-github"></i> GitHub</a>
         <a href={socialLinks.linkedin} target="_blank" rel="noopener"><i class="fa-brands fa-linkedin"></i> LinkedIn</a>
@@ -56,7 +62,7 @@ const year = new Date().getFullYear();
         <a href={socialLinks.email}><i class="fa-solid fa-envelope"></i> Email</a>
       </p>
       <p class="subtext">&copy; {year} {siteName}. All rights reserved.</p>
-    </div>
+    </footer>
 
     <script>
       // Play hover-preview videos on card hover; pause and rewind on leave
@@ -69,14 +75,6 @@ const year = new Date().getFullYear();
         });
         card.addEventListener('mouseleave', () => {
           video.pause();
-        });
-      });
-
-      // Whole card is clickable; real links inside keep working normally
-      document.querySelectorAll('.project-card[data-href]').forEach((card) => {
-        card.addEventListener('click', (e) => {
-          if (e.target.closest('a')) return;
-          window.location = card.dataset.href;
         });
       });
     </script>

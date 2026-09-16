@@ -140,37 +140,32 @@ h2 {
 
 p.subtext {
     text-align: center;
-    color: var(--subheader-color);
+    color: var(--accent-muted);
     font-family: Cambria, Georgia, serif;
     line-height: 10px;
     margin: 10px 0;
 }
 
-footer {
-    text-align: center;
-    padding: 10px 0px;
-    color: var(--header-color);
-    position: fixed;
-    width: 100%;
-    bottom: 0;
-    opacity: 1;
-    background-color: rgba(55, 56, 61, 0.9);
-    backdrop-filter: blur(5px);
+/* Keyboard access: one visible focus ring everywhere, and a skip link that
+   appears only when focused. */
+:focus-visible {
+    outline: 3px solid var(--header-color);
+    outline-offset: 3px;
 }
 
-footer button {
-    margin-top: 10px;
-    padding: 10px 20px;
-    background-color: white;
-    color: var(--header-color);
-    border: none;
-    cursor: pointer;
-    font-size: 16px;
-    font-family: inherit;
-    border-radius: 5px;
-    transition: background-color 0.3s ease;
+.skip-link {
+    position: absolute;
+    top: 8px;
+    left: -999px;
+    z-index: 1000;
+    padding: 8px 14px;
+    border-radius: 6px;
+    background: var(--header-color);
+    color: var(--on-accent);
+    font-weight: 600;
+    text-decoration: none;
 }
 
-footer button:hover {
-    background-color: var(--button-hover);
+.skip-link:focus {
+    left: 8px;
 }

@@ -4,10 +4,14 @@
 // Pass `open` to start expanded (the PHP pages auto-open the first section so the
 // technical depth is visible without a click).
 const { title, open = false } = Astro.props;
+const id = 'expand-' + title.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');
 ---
 <div class="expandable-section">
-  <button class:list={['expand-toggle', { active: open }]}>{title} <span class="toggle-icon">▼</span></button>
-  <div class:list={['expandable-content', { active: open }]}>
+  <button
+    class:list={['expand-toggle', { active: open }]}
+    aria-expanded={open ? 'true' : 'false'}
+    aria-controls={id}>{title} <span class="toggle-icon" aria-hidden="true">▼</span></button>
+  <div id={id} class:list={['expandable-content', { active: open }]}>
     <slot />
   </div>
 </div>
@@ -17,8 +21,9 @@ const { title, open = false } = Astro.props;
   // are used, so the listener is attached to every toggle exactly once.
   document.querySelectorAll('.expand-toggle').forEach((button) => {
     button.addEventListener('click', function () {
-      this.classList.toggle('active');
-      this.nextElementSibling?.classList.toggle('active');
+      const isOpen = this.classList.toggle('active');
+      this.nextElementSibling?.classList.toggle('active', isOpen);
+      this.setAttribute('aria-expanded', String(isOpen));
     });
   });
 </script>

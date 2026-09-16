@@ -1,17 +1,20 @@
 ---
-// src/components/ProjectCard.astro — ported from includes/project-components/project_card.php
-const { project, showLink = true } = Astro.props;
+// src/components/ProjectCard.astro — compact, fully clickable project card.
+// The whole card is one <a>, so it works with keyboard and screen readers
+// without any click-forwarding script. Content is deliberately minimal
+// (image, title, company, one-line tagline, up to three tags): the detail
+// page carries the rest.
+const { project } = Astro.props;
 const hasVideo = !!project.video;
-const hasGif = !!project.gif;
-const achievementsLabel = project.category === 'devops' ? 'Achievements' : 'Contributions';
-const cardHref = showLink && project.link ? project.link : undefined;
+const tags = (project.tech_tags ?? []).slice(0, 3);
+const tagline = project.tagline ?? project.description;
 ---
-<div class="project-card" data-href={cardHref}>
+<a class="project-card" href={project.link}>
   <div class="project-media">
     {project.image ? (
       <>
-        <img src={project.image} alt={project.title} loading="lazy" />
-        {hasVideo ? (
+        <img src={project.image} alt="" loading="lazy" width="1200" height="900" />
+        {hasVideo && (
           <video
             class="hover-video"
             src={project.video}
@@ -19,39 +22,24 @@ const cardHref = showLink && project.link ? project.link : undefined;
             loop
             playsinline
             preload="metadata"
-            aria-label={`${project.title} preview`}></video>
-        ) : hasGif ? (
-          <img class="hover-gif" src={project.gif} alt={`${project.title} GIF`} loading="lazy" />
-        ) : null}
+            aria-hidden="true"
+            tabindex="-1"></video>
+        )}
       </>
     ) : (
-      <div class="project-media-overlay">
+      <div class="project-media-overlay" aria-hidden="true">
         <div class="media-icon">🔄</div>
       </div>
     )}
   </div>
   <div class="project-info-card">
     <h3>{project.title}</h3>
-    <p class="project-company">{project.company}</p>
-    <p class="project-description-card">{project.description}</p>
-
-    {project.highlights?.length > 0 && (
-      <div class="project-highlights">
-        <strong>Key {achievementsLabel}:</strong>
-        <ul>
-          {project.highlights.map((h) => <li>{h}</li>)}
-        </ul>
-      </div>
-    )}
-
-    {project.tech_tags?.length > 0 && (
-      <div class="tech-tags">
-        {project.tech_tags.map((tag) => <span class="tech-tag">{tag}</span>)}
-      </div>
-    )}
-
-    {showLink && project.link && (
-      <a href={project.link} class="project-link">View Project Details</a>
+    {project.company && <p class="project-company">{project.company}</p>}
+    <p class="project-tagline">{tagline}</p>
+    {tags.length > 0 && (
+      <ul class="tech-tags">
+        {tags.map((tag) => <li class="tech-tag">{tag}</li>)}
+      </ul>
     )}
   </div>
-</div>
+</a>

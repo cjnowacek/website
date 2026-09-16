@@ -17,6 +17,7 @@ const projects = defineCollection({
     gif: z.string().nullable().default(null),
     video: z.string().nullable().default(null),
     description: z.string(),
+    tagline: z.string().optional(), // one line for the card; falls back to description
     highlights: z.array(z.string()).default([]),
     tech_tags: z.array(z.string()).default([]),
     pageTitle: z.string().optional(), // overrides the <title>; defaults to "<title> - <Category>"

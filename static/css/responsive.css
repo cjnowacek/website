@@ -27,8 +27,13 @@
         font-size: 12px;
     }
     
+    .title__container h1 {
+        font-size: 2.4em;
+        margin-bottom: 8px;
+    }
+
     .title__container nav {
-        gap: 20px;
+        gap: 14px 20px;
     }
     
     .title__container nav a {
@@ -39,17 +44,8 @@
         gap: 2rem;
     }
     
-    .project-media {
-        height: 250px;
-    }
-    
     .project-info-card {
         padding: 1.5rem;
-    }
-    
-    .projects-container-index {
-        grid-template-columns: 1fr !important;
-        gap: 2rem;
     }
     
     .two-column-layout {
@@ -107,7 +103,7 @@
 
 @media (max-width: 480px) {
     .title__container h1 {
-        font-size: 3em;
+        font-size: 2.1em;
     }
     
     h2 {

@@ -15,7 +15,7 @@ const featuredProjects = await getProjectCards([
 <Layout title="Home">
   <div class="container" style="max-width: 1300px;">
     <h2>Pipeline Developer &amp; Technical Artist</h2>
-    <div class="about-text" style="max-width: 800px; margin: 0 auto 40px auto; text-align: left;">
+    <div class="about-text" style="max-width: 800px; margin: 0 auto 24px auto; text-align: left;">
       <p>
         I build production pipelines for CG studios: desktop tools in Python and PyQt, render farm
         automation, and the deployment systems that keep a studio's tooling consistent across every
@@ -23,6 +23,11 @@ const featuredProjects = await getProjectCards([
         animator. That artist's-side experience is the point: the systems I build fit how artists
         actually work, because I have been the artist they were built for.
       </p>
+    </div>
+
+    <h2>Featured Projects</h2>
+    <div class="projects-container projects-container-grid">
+      {featuredProjects.map((project) => <ProjectCard project={project} />)}
     </div>
 
     <h2>What I Build</h2>
@@ -62,11 +67,6 @@ const featuredProjects = await getProjectCards([
           </p>
         </div>
       </div>
-    </div>
-
-    <h2>Featured Projects</h2>
-    <div class="projects-container projects-container-index">
-      {featuredProjects.map((project) => <ProjectCard project={project} />)}
     </div>
   </div>
 </Layout>

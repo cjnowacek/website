@@ -5,6 +5,12 @@
 
     --header-color: #FF7A40;
     --subheader-color: #b45b35;
+    /* WCAG AA pairs (Sep 2026 contrast pass):
+       --header-color on the dark backgrounds passes for headings, but not on
+       white cards (2.6:1) and white text on it fails (2.6:1). */
+    --accent-muted: #de8c66;   /* orange text on --nav-bg (nav links, copyright): 5.2:1 */
+    --accent-dark: #a8532f;    /* orange text on white cards and light tags: 5.3:1 */
+    --on-accent: #2d2e33;      /* text on orange buttons: 5.2:1 */
 
     --bg-color: #37383d;
     --nav-bg: #2d2e33;
