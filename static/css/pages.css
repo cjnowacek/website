@@ -8,6 +8,71 @@
     padding: 20px;
 }
 
+/* HOME HERO: headshot beside the headline, intro and two CTAs; stacks on phones */
+.home-hero {
+    display: flex;
+    align-items: center;
+    gap: 2.5rem;
+    max-width: 1000px;
+    margin: 1.5rem auto 2rem;
+    text-align: left;
+}
+
+.home-hero-photo {
+    flex-shrink: 0;
+    width: 200px;
+    height: 200px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 3px solid var(--header-color);
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.35);
+}
+
+.home-hero h2 {
+    text-align: left;
+    font-size: 2.2em;
+    margin: 0 0 0.75rem;
+}
+
+.home-hero p {
+    color: var(--text-secondary);
+    line-height: 1.6;
+    margin: 0 0 1.25rem;
+}
+
+.home-hero-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1rem;
+}
+
+.project-link-secondary {
+    background: var(--form-bg);
+    color: var(--text-color);
+    box-shadow: inset 0 0 0 2px var(--subheader-color);
+}
+
+@media (max-width: 768px) {
+    .home-hero {
+        flex-direction: column;
+        text-align: center;
+        gap: 1.25rem;
+    }
+
+    .home-hero-photo {
+        width: 150px;
+        height: 150px;
+    }
+
+    .home-hero h2 {
+        text-align: center;
+    }
+
+    .home-hero-actions {
+        justify-content: center;
+    }
+}
+
 .about-content h2,
 .about-content h3 {
     color: var(--header-color);

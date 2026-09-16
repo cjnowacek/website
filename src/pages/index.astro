@@ -14,16 +14,34 @@ const featuredProjects = await getProjectCards([
 ---
 <Layout title="Home">
   <div class="container" style="max-width: 1300px;">
-    <h2>Pipeline Developer &amp; Technical Artist</h2>
-    <div class="about-text" style="max-width: 800px; margin: 0 auto 24px auto; text-align: left;">
-      <p>
-        I build production pipelines for CG studios: desktop tools in Python and PyQt, render farm
-        automation, and the deployment systems that keep a studio's tooling consistent across every
-        machine. My background is character rigging, with a ship credit on SMITE 2 as a technical
-        animator. That artist's-side experience is the point: the systems I build fit how artists
-        actually work, because I have been the artist they were built for.
-      </p>
-    </div>
+    <section class="home-hero">
+      <img
+        class="home-hero-photo"
+        src="/static/img/pfp/headshot-2026_512x512.webp"
+        alt="CJ Nowacek"
+        width="512"
+        height="512"
+        fetchpriority="high"
+      />
+      <div class="home-hero-body">
+        <h2>Pipeline Developer &amp; Technical Artist</h2>
+        <p>
+          I build production pipelines for CG studios: desktop tools in Python and PyQt, render farm
+          automation, and the deployment systems that keep a studio's tooling consistent across every
+          machine. My background is character rigging, with a ship credit on SMITE 2 as a technical
+          animator. That artist's-side experience is the point: the systems I build fit how artists
+          actually work, because I have been the artist they were built for.
+        </p>
+        <div class="home-hero-actions">
+          <a
+            href="/static/files/CJ-Nowacek-Pipeline-Resume.pdf"
+            class="project-link"
+            target="_blank"
+            rel="noopener">Download Resume (PDF)</a>
+          <a href="/contact" class="project-link project-link-secondary">Get in Touch</a>
+        </div>
+      </div>
+    </section>
 
     <h2>Featured Projects</h2>
     <div class="projects-container projects-container-grid">
