@@ -2,11 +2,24 @@
 // src/pages/about.astro — ported from about.php
 import Layout from '../layouts/Layout.astro';
 ---
-<Layout title="About">
+<Layout title="About" description="About CJ Nowacek: pipeline developer at an architectural visualization studio, former technical animator on SMITE 2, BFA from the Cleveland Institute of Art.">
   <div class="container" style="max-width: 1300px;">
     <div class="about-content">
       <div class="about-text">
         <h2>About Me</h2>
+        <div class="about-hero">
+          <img
+            class="home-hero-photo"
+            src="/static/img/pfp/headshot-2026_512x512.webp"
+            alt="CJ Nowacek"
+            width="512"
+            height="512"
+          />
+          <div class="home-hero-actions">
+            <a href="/static/files/CJ-Nowacek-Pipeline-Resume.pdf" class="project-link" target="_blank" rel="noopener">Pipeline Resume (PDF)</a>
+            <a href="/static/files/CJ-Nowacek-TechArt-Resume.pdf" class="project-link project-link-secondary" target="_blank" rel="noopener">Tech Art Resume (PDF)</a>
+          </div>
+        </div>
         <div class="about-text" style="max-width: 800px; margin: 0 auto 40px auto; text-align: left;">
           <p>
             I am a pipeline developer for CG studios. I build the tools artists use every day: scene

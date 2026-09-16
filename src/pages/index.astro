@@ -2,6 +2,7 @@
 // src/pages/index.astro — ported from index.php
 import Layout from '../layouts/Layout.astro';
 import ProjectCard from '../components/ProjectCard.astro';
+import Icon from '../components/Icon.astro';
 import { getProjectCards } from '../lib/projects.js';
 
 // Control which projects appear and in what order.
@@ -53,7 +54,7 @@ const featuredProjects = await getProjectCards([
       <div class="grid-item">
         <div class="project-info">
           <h3>
-            <i class="fa-solid fa-toolbox" style="color: var(--header-color); vertical-align: middle; margin-right: 4px; font-size:1.1em;"></i>Production Tools
+            <Icon name="toolbox" class="icon-accent" />Production Tools
           </h3>
           <p class="project-description">
             Python/PyQt and MaxScript applications for scene diagnostics, preparation, render
@@ -65,7 +66,7 @@ const featuredProjects = await getProjectCards([
       <div class="grid-item">
         <div class="project-info">
           <h3>
-            <i class="fa-solid fa-server" style="color: var(--header-color); vertical-align: middle; margin-right: 4px; font-size:1.1em;"></i>Pipeline Infrastructure
+            <Icon name="server" class="icon-accent" />Pipeline Infrastructure
           </h3>
           <p class="project-description">
             Render-farm automation, software deployment, batch processing, and CI/CD for production
@@ -77,7 +78,7 @@ const featuredProjects = await getProjectCards([
       <div class="grid-item">
         <div class="project-info">
           <h3>
-            <i class="fa-solid fa-diagram-project" style="color: var(--header-color); vertical-align: middle; margin-right: 4px; font-size:1.1em;"></i>Cross-DCC Workflows
+            <Icon name="diagram-project" class="icon-accent" />Cross-DCC Workflows
           </h3>
           <p class="project-description">
             Tools and systems connecting 3ds Max, Maya, Unreal, and render-management platforms

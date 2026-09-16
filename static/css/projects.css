@@ -307,6 +307,40 @@
     background: var(--form-bg);
 }
 
+/* At-a-glance facts row under the hero */
+.project-facts {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1rem 2.5rem;
+    max-width: 1000px;
+    margin: 0 auto 2.5rem;
+    padding: 1rem 1.5rem;
+    background: var(--form-bg);
+    border-radius: 12px;
+    text-align: left;
+}
+
+.project-facts dt {
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: var(--text-secondary);
+    margin-bottom: 0.2rem;
+}
+
+.project-facts dd {
+    margin: 0;
+    color: var(--text-color);
+}
+
+.project-facts-tools {
+    flex: 1 1 100%;
+}
+
+.project-facts .tech-tags {
+    margin: 0;
+}
+
 .detail-hero figcaption {
     margin-top: 0.6rem;
     color: var(--text-secondary);

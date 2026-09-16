@@ -1,0 +1,16 @@
+---
+// src/components/Icon.astro — inline SVG icon. The files in src/icons/ are
+// Font Awesome Free glyphs (CC BY 4.0, https://fontawesome.com/license/free),
+// copied out of the npm package so the site no longer loads the CDN stylesheet
+// and two webfonts for ten icons. Usage: <Icon name="github" /> or
+// <Icon name="server" class="icon-accent" label="Server" />
+const icons = import.meta.glob('../icons/*.svg', { query: '?raw', import: 'default', eager: true });
+const { name, class: cls = '', label } = Astro.props;
+const raw = icons[`../icons/${name}.svg`];
+if (!raw) throw new Error(`Icon "${name}" not found in src/icons/`);
+const a11y = label ? `role="img" aria-label="${label}"` : 'aria-hidden="true"';
+const svg = raw
+  .replace(/<!--[\s\S]*?-->/g, '')
+  .replace('<svg ', `<svg class="icon ${cls}" fill="currentColor" ${a11y} `);
+---
+<Fragment set:html={svg} />

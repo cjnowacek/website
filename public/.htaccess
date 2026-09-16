@@ -33,6 +33,10 @@ RewriteRule ^(?:pages-techart|techart)/(whisper-from-the-stars|whispers-from-the
 RewriteRule ^(?:pages-devops|devops)/build-pipeline(/.*)?$ /devops/ [R=301,L]
 RewriteRule ^devops/media-lab(/.*)?$ /devops/ml3ds/ [R=301,L]
 
+# Old flat project pages jump straight to the final URL (one hop, not three):
+#   /pages-techart/foo.php -> /techart/foo/
+RewriteRule ^pages-(techart|devops)/([^/.]+)\.php$ /$1/$2/ [R=301,L]
+
 # Old URLs, permanently moved:
 #   /pages-techart/foo/ -> /techart/foo/   (project pages)
 #   /pages-devops/foo/  -> /devops/foo/
@@ -44,7 +48,7 @@ RewriteRule ^(.*/)?index\.php$ /$1 [R=301,L]
 
 # /foo.php -> /foo (old flat pages: about.php, contact.php, techart.php, ...)
 RewriteCond %{THE_REQUEST} \s/+([^.?\s]+)\.php[\s?]
-RewriteRule ^ /%1 [R=301,L]
+RewriteRule ^ /%1/ [R=301,L]
 
 # /notes -> the vault served by Cairn's engine on the droplet (zk-engine,
 # tools/notes-vps-setup.sh). A redirect rather than a proxy: this host is

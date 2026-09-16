@@ -22,7 +22,7 @@
     border-radius: 5px;
     color: var(--text-color);
     font-family: inherit;
-    font-size: 14px;
+    font-size: 16px; /* under 16px, iOS zooms the page when a field is focused */
     box-sizing: border-box;
 }
 

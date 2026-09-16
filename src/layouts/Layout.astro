@@ -1,12 +1,20 @@
 ---
 // src/layouts/Layout.astro — ported from includes/header.php + footer.php
 import { siteName, siteTitle, siteDescription, navItems, socialLinks } from '../config.js';
+import Icon from '../components/Icon.astro';
 // Bundle the global CSS through Astro so it gets a content-hashed filename.
 // This auto-busts the browser cache whenever the CSS changes (the old
 // /static/css/main.css link cached its @import'd files indefinitely).
 import '../../static/css/main.css';
 
-const { title } = Astro.props;
+// Per-page SEO: `description` and `image` feed the meta tags and social cards;
+// `type` is 'article' on project pages so previews use the large-image card.
+const {
+  title,
+  description = siteDescription,
+  image = '/static/img/pfp/headshot-2026_512x512.webp',
+  type = 'website',
+} = Astro.props;
 const pageTitle = title ? `${title} - ${siteName}` : siteTitle;
 
 // Active-nav highlighting based on the real request path.
@@ -19,6 +27,11 @@ function isActive(href) {
 }
 
 const year = new Date().getFullYear();
+
+// The built site is directory-per-page, and the host redirects /foo -> /foo/,
+// so the canonical form always carries the trailing slash (except the root).
+const canonical = new URL(path === '/' ? '/' : `${path}/`, Astro.site).href;
+const imageUrl = new URL(image, Astro.site).href;
 ---
 <!DOCTYPE html>
 <html lang="en">
@@ -26,15 +39,23 @@ const year = new Date().getFullYear();
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta name="author" content="CJ Nowacek" />
-    <meta name="description" content={siteDescription} />
+    <meta name="description" content={description} />
     <title>{pageTitle}</title>
+    <link rel="canonical" href={canonical} />
+    <link rel="sitemap" href="/sitemap-index.xml" />
+    <meta property="og:site_name" content={siteName} />
+    <meta property="og:type" content={type} />
+    <meta property="og:title" content={pageTitle} />
+    <meta property="og:description" content={description} />
+    <meta property="og:url" content={canonical} />
+    <meta property="og:image" content={imageUrl} />
+    <meta name="twitter:card" content={type === 'article' ? 'summary_large_image' : 'summary'} />
+    <meta name="twitter:title" content={pageTitle} />
+    <meta name="twitter:description" content={description} />
+    <meta name="twitter:image" content={imageUrl} />
     <link rel="icon" href="/favicon.ico" sizes="32x32" />
     <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
     <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
-    <link
-      rel="stylesheet"
-      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"
-    />
   </head>
   <body>
     <a class="skip-link" href="#main">Skip to content</a>
@@ -56,10 +77,10 @@ const year = new Date().getFullYear();
 
     <footer class="site-footer">
       <p class="footer-links">
-        <a href={socialLinks.github} target="_blank" rel="noopener"><i class="fa-brands fa-github"></i> GitHub</a>
-        <a href={socialLinks.linkedin} target="_blank" rel="noopener"><i class="fa-brands fa-linkedin"></i> LinkedIn</a>
-        <a href={socialLinks.vimeo} target="_blank" rel="noopener"><i class="fa-brands fa-vimeo"></i> Demo Reel</a>
-        <a href={socialLinks.email}><i class="fa-solid fa-envelope"></i> Email</a>
+        <a href={socialLinks.github} target="_blank" rel="noopener"><Icon name="github" /> GitHub</a>
+        <a href={socialLinks.linkedin} target="_blank" rel="noopener"><Icon name="linkedin" /> LinkedIn</a>
+        <a href={socialLinks.vimeo} target="_blank" rel="noopener"><Icon name="vimeo" /> Demo Reel</a>
+        <a href={socialLinks.email}><Icon name="envelope" /> Email</a>
       </p>
       <p class="subtext">&copy; {year} {siteName}. All rights reserved.</p>
     </footer>

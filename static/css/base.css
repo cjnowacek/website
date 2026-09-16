@@ -146,6 +146,20 @@ p.subtext {
     margin: 10px 0;
 }
 
+/* Inline SVG icons (src/components/Icon.astro) size to the surrounding text */
+.icon {
+    display: inline-block;
+    width: 1em;
+    height: 1em;
+    vertical-align: -0.125em;
+}
+
+.icon-accent {
+    color: var(--header-color);
+    font-size: 1.1em;
+    margin-right: 6px;
+}
+
 /* Keyboard access: one visible focus ring everywhere, and a skip link that
    appears only when focused. */
 :focus-visible {

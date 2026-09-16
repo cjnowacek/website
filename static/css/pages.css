@@ -46,6 +46,23 @@
     gap: 1rem;
 }
 
+.about-hero {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1.25rem;
+    margin: 0 0 2rem;
+}
+
+.about-hero .home-hero-photo {
+    width: 160px;
+    height: 160px;
+}
+
+.about-hero .home-hero-actions {
+    justify-content: center;
+}
+
 .project-link-secondary {
     background: var(--form-bg);
     color: var(--text-color);

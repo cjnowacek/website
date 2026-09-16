@@ -12,8 +12,17 @@ const title = d.pageTitle ?? `${d.title} - ${categoryLabel}`;
 // Media first: the card image (or an explicit `hero`) sits under the title.
 const heroSrc = d.hero ?? d.image;
 const heroIsVideo = !!heroSrc && /\.mp4$/i.test(heroSrc);
+
+// At-a-glance facts under the hero: what the role was, where, when, with whom.
+const facts = [
+  ['Role', d.meta?.role],
+  ['Studio', d.company],
+  ['When', d.meta?.duration],
+  ['Team', d.meta?.team_size],
+  ['Platform', d.meta?.platforms],
+].filter(([, v]) => v);
 ---
-<Layout title={title}>
+<Layout title={title} description={d.tagline ?? d.description} image={d.image ?? undefined} type="article">
   <div class="container" style="max-width: 1300px;">
     <Breadcrumb
       crumbs={[
@@ -34,6 +43,27 @@ const heroIsVideo = !!heroSrc && /\.mp4$/i.test(heroSrc);
         )}
         {d.heroCaption && <figcaption>{d.heroCaption}</figcaption>}
       </figure>
+    )}
+
+    {(facts.length > 0 || d.tech_tags.length > 0) && (
+      <dl class="project-facts">
+        {facts.map(([label, value]) => (
+          <div>
+            <dt>{label}</dt>
+            <dd>{value}</dd>
+          </div>
+        ))}
+        {d.tech_tags.length > 0 && (
+          <div class="project-facts-tools">
+            <dt>Tools</dt>
+            <dd>
+              <ul class="tech-tags">
+                {d.tech_tags.map((t) => <li class="tech-tag">{t}</li>)}
+              </ul>
+            </dd>
+          </div>
+        )}
+      </dl>
     )}
 
     <slot />

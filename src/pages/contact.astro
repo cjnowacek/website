@@ -14,7 +14,7 @@ const resumeUpdated = statSync(
   new URL('../../static/files/CJ-Nowacek-Pipeline-Resume.pdf', import.meta.url)
 ).mtime.toLocaleDateString('en-US', { year: 'numeric', month: 'long' });
 ---
-<Layout title="Contact">
+<Layout title="Contact" description="Get in touch with CJ Nowacek about pipeline tooling, technical art, freelance rigging, or a role. Email, LinkedIn, resumes, and a contact form.">
   <div class="container" style="max-width: 1300px;">
     <h2>Get In Touch</h2>
 
@@ -61,8 +61,9 @@ const resumeUpdated = statSync(
             <span>Open to interesting conversations</span>
           </div>
           <p class="project-description">
-            Happily building pipeline tooling at ML3DS. Not looking, but always glad to talk
-            shop: technical art, pipeline, or render-farm war stories.
+            Building pipeline tooling at ML3DS and always glad to talk shop: technical art,
+            pipeline, or render-farm war stories. If you have an interesting problem, a role
+            worth hearing about, or a rig that needs a second pair of eyes, the inbox is open.
           </p>
         </div>
       </div>
@@ -101,13 +102,6 @@ const resumeUpdated = statSync(
             <label for="message">Message *</label>
             <textarea id="message" name="message" rows="6" required
               placeholder="Tell me about your project, opportunity, or question..."></textarea>
-          </div>
-
-          <div class="form-group">
-            <label class="checkbox-label">
-              <input type="checkbox" id="newsletter" name="newsletter" />
-              Keep me updated on your latest projects and articles
-            </label>
           </div>
 
           <button type="submit" class="submit-btn">Send Message</button>
