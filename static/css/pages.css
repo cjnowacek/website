@@ -75,7 +75,7 @@
 
 .about-content h2,
 .about-content h3 {
-    color: var(--header-color);
+    color: var(--text-color);
     font-family: Cambria, Georgia, serif;
 }
 
@@ -113,7 +113,7 @@
 
 .demo-reel h2,
 .demo-reel h3 {
-    color: var(--header-color);
+    color: var(--text-color);
     font-family: Cambria, Georgia, serif;
     font-size: 1.5em;
     margin-bottom: 20px;
@@ -132,7 +132,7 @@
 
 .contact-info h3,
 .contact-form h3 {
-    color: var(--header-color);
+    color: var(--text-color);
     font-family: Cambria, Georgia, serif;
     font-size: 1.5em;
     margin-bottom: 20px;

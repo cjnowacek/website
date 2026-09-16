@@ -52,7 +52,7 @@
 }
 
 .competencies-grid .grid-item .project-info h3 {
-    color: var(--header-color);
+    color: var(--text-color);
     font-family: Cambria, Georgia, serif;
     font-size: 1.2rem;
     margin-bottom: 1rem;
@@ -141,7 +141,7 @@
 }
 
 .project-info-card h3 {
-    color: var(--header-color);
+    color: var(--text-color);
     font-size: 1.25rem;
     margin: 0;
 }
@@ -234,13 +234,13 @@
 }
 
 .tech-tag {
-    background: linear-gradient(135deg, #fff5f0 0%, #ffeee6 100%);
-    color: var(--accent-dark);
+    background: rgba(255, 255, 255, 0.06);
+    color: var(--text-secondary);
     padding: 0.3rem 0.8rem;
     border-radius: 15px;
     font-size: 0.8rem;
     font-weight: 500;
-    border: 1px solid #e0e0e0;
+    border: 1px solid rgba(255, 255, 255, 0.16);
     transition: all 0.3s ease;
 }
 
@@ -358,7 +358,7 @@
 }
 
 .content-column h3 {
-    color: var(--header-color);
+    color: var(--text-color);
     margin-top: 30px;
     font-family: Cambria, Georgia, serif;
 }
@@ -379,7 +379,7 @@
 
 .project-info-box h3,
 .tech-stack-box h3 {
-    color: var(--header-color);
+    color: var(--text-color);
     font-family: Cambria, Georgia, serif;
     margin-bottom: 20px;
 }
@@ -440,7 +440,7 @@
 }
 
 .achievement-card h3 {
-    color: var(--header-color);
+    color: inherit;
     margin-bottom: 15px;
     font-family: Cambria, Georgia, serif;
 }
@@ -488,7 +488,7 @@
 }
 
 .timeline-content h3 {
-    color: var(--header-color);
+    color: var(--text-color);
     margin-bottom: 10px;
     font-family: Cambria, Georgia, serif;
 }
@@ -554,9 +554,15 @@
 /* Expandable Sections */
 .expandable-section {
     margin: 30px 0;
-    border: 2px solid var(--subheader-color);
+    border: 2px solid rgba(255, 255, 255, 0.12);
+    transition: border-color 0.3s ease;
     border-radius: 8px;
     overflow: hidden;
+}
+
+.expandable-section:has(.expand-toggle.active),
+.expandable-section:hover {
+    border-color: var(--header-color);
 }
 
 .expand-toggle {
