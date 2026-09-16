@@ -37,7 +37,7 @@ farm's software installs consistent without anyone touching a machine by hand.
 
 </div>
 
-## Key Contributions
+## What I Built
 
 <div class="grid competencies-grid">
   <div class="grid-item">
@@ -101,7 +101,7 @@ nothing to install before the installer runs.
 
 <div class="about-text" style="max-width: 800px; margin: 0 auto 40px auto; text-align: left;">
 
-## Project Results
+## Results
 
 Production tooling in daily use across the studio: artists submit complex batch renders in one
 click, scene health is diagnosed without opening Max, and farm software rollouts happen remotely
@@ -115,39 +115,5 @@ instead of machine by machine.
 - **Instant Scene Diagnostics:** JSON manifest caching answers pipeline questions without loading heavy scene files
 - **Hands-Off Deployment:** Full render farm software rollouts run remotely with no manual machine access
 - **Three Interfaces, One Library:** CLI, desktop GUI, and in-Max tooling share a single tested core
-
----
-
-### Technology Stack
-
-- **Languages:** Python, MaxScript, pymxs
-- **UI & Tooling:** PyQt, CLI utilities
-- **Production:** 3ds Max, V-Ray, render-farm management
-- **Infrastructure:** Windows deployment scripting, Git
-
----
-
-### Role & Duration
-
-- **Role:** CGI Pipeline Developer
-- **Duration:** 2026-Present
-- **Scope:** Studio-wide pipeline and render farm tooling
-
-</div>
-
-## Challenges & Lessons
-
-<div class="about-text" style="max-width: 800px; margin: 0 auto 40px auto; text-align: left;">
-
-**Build for the artist, not the pipeline:** Coming from a rigging background, I design tools around
-how artists actually work. Adoption is the real success metric; a technically elegant tool nobody
-opens is a failure.
-
-**Unattended means bulletproof:** Farm automation runs with nobody watching. Exit codes, logging,
-and dry-run modes are not polish; they are the difference between a rollout and an outage.
-
-**Meet the constraint, then design:** Version floors, locked-down workers, and live production
-schedules shape every architecture decision. The interesting engineering is making clean design fit
-real constraints.
 
 </div>

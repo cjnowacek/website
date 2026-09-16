@@ -36,7 +36,7 @@ the system remained artist-friendly and performed efficiently in the animation p
 
 </div>
 
-## Key Features
+## What I Built
 
 <div class="grid competencies-grid">
   <div class="grid-item">
@@ -78,34 +78,6 @@ the system remained artist-friendly and performed efficiently in the animation p
   </div>
 </div>
 
-## Rig Impact
-
-<div class="about-text" style="max-width: 800px; margin: 0 auto 40px auto; text-align: left;">
-
-Enabled new gameplay mechanics and cinematic possibilities by giving animators precise control over
-gravity simulation. The constraint-based approach provided predictable, keyframeable results while
-maintaining real-time performance in the animation workflow.
-
-- **Gameplay Flexibility:** Supported wall-walking and gravity-defying character abilities
-- **Animator Control:** Keyframeable gravity direction gave animators full creative control
-- **Real-Time Performance:** Constraint system maintained viewport interactivity during animation
-- **Clean Export:** Baked animations exported cleanly to engine without simulation artifacts
-
-### Technology Stack
-
-- **3D Software:** 3ds Max
-- **Rigging Systems:** Orient Constraints, Aim Constraints
-- **Animation Tools:** Custom control rigs, parameter wiring
-
-### Development Details
-
-- **Role:** Technical Animator & Rigger
-- **Development Type:** Rigging system development
-- **Context:** Part of Smite character rigging pipeline
-- **Platforms:** PC, Console
-
-</div>
-
 ## Technical Implementation
 
 <div class="grid competencies-grid">
@@ -135,65 +107,17 @@ maintaining real-time performance in the animation workflow.
   </div>
 </div>
 
-## Use Cases
+## Results
 
 <div class="about-text" style="max-width: 800px; margin: 0 auto 40px auto; text-align: left;">
 
-**Wall-Walking Characters:** Characters with abilities to walk on vertical surfaces required smooth
-gravity transitions. The rig allowed animators to blend between floor, wall, and ceiling orientations
-seamlessly.
+Enabled new gameplay mechanics and cinematic possibilities by giving animators precise control over
+gravity simulation. The constraint-based approach provided predictable, keyframeable results while
+maintaining real-time performance in the animation workflow.
 
-**Cinematic Gravity Changes:** Dramatic camera angles and environmental gravity shifts in cutscenes
-were achieved by keyframing the gravity direction controls over time.
-
-**Zero-Gravity Environments:** By blending gravity influence to zero or switching directions rapidly,
-animators could create convincing floating and tumbling motions.
-
-</div>
-
-## Technical Challenges
-
-<div class="grid competencies-grid">
-  <div class="grid-item">
-    <div class="project-info">
-      <h3>Constraint Stability</h3>
-      <p class="project-description">Maintaining stable constraint evaluation order was critical to prevent flipping or gimbal lock during gravity transitions.</p>
-    </div>
-  </div>
-  <div class="grid-item">
-    <div class="project-info">
-      <h3>Animation Blending</h3>
-      <p class="project-description">Required careful setup to ensure gravity transitions could blend smoothly with existing locomotion and action animations.</p>
-    </div>
-  </div>
-  <div class="grid-item">
-    <div class="project-info">
-      <h3>Performance Optimization</h3>
-      <p class="project-description">Constraint evaluation overhead required optimization to maintain real-time scrubbing in complex scenes.</p>
-    </div>
-  </div>
-  <div class="grid-item">
-    <div class="project-info">
-      <h3>Engine Export</h3>
-      <p class="project-description">Ensuring constraint-driven motion baked correctly for Unreal Engine import without losing fidelity.</p>
-    </div>
-  </div>
-</div>
-
-## Lessons Learned
-
-<div class="about-text" style="max-width: 800px; margin: 0 auto 40px auto; text-align: left;">
-
-**Constraints Over Simulation:** For game animation, predictable constraint-based systems proved more
-artist-friendly than dynamic simulations. Animators valued control over automatic behavior.
-
-**Hierarchy Matters:** Proper constraint hierarchy and evaluation order were essential. Early
-prototypes suffered from evaluation order issues that caused unpredictable results.
-
-**Test Early and Often:** Testing gravity transitions with real animation cycles revealed edge cases
-that weren't apparent in static poses. Iterative testing with animators was invaluable.
-
-**Documentation Drives Adoption:** Clear documentation with visual examples ensured animators could
-quickly understand and utilize the gravity controls without technical support.
+- **Gameplay Flexibility:** Supported wall-walking and gravity-defying character abilities
+- **Animator Control:** Keyframeable gravity direction gave animators full creative control
+- **Real-Time Performance:** Constraint system maintained viewport interactivity during animation
+- **Clean Export:** Baked animations exported cleanly to engine without simulation artifacts
 
 </div>

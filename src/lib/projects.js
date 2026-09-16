@@ -10,7 +10,7 @@ export function toCard(entry) {
 
 // Fetch card-shaped projects by explicit ids, preserving the given order.
 export async function getProjectCards(ids) {
-  const all = await getCollection('projects');
+  const all = await getCollection('projects', (e) => !e.data.draft);
   const byId = new Map(all.map((e) => [e.id, e]));
   return ids
     .map((id) => byId.get(id))
