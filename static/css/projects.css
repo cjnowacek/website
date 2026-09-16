@@ -288,6 +288,40 @@
 }
 
 /* PROJECT PAGE STYLES */
+/* Media-first detail pages: image or demo video directly under the title */
+.detail-hero {
+    max-width: 1000px;
+    margin: 0 auto 2.5rem;
+}
+
+.detail-hero img,
+.detail-hero video {
+    display: block;
+    width: 100%;
+    height: auto; /* beat the width/height attributes so aspect-ratio applies */
+    aspect-ratio: 16 / 9;
+    object-fit: cover;
+    object-position: 50% 35%;
+    border-radius: 12px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+    background: var(--form-bg);
+}
+
+.detail-hero figcaption {
+    margin-top: 0.6rem;
+    color: var(--text-secondary);
+    font-size: 0.9rem;
+    text-align: center;
+}
+
+@media (max-width: 600px) {
+    .detail-hero img,
+    .detail-hero video {
+        aspect-ratio: 4 / 3;
+        border-radius: 8px;
+    }
+}
+
 /* Project Hero Section */
 .project-hero {
     margin-bottom: 40px;

@@ -18,6 +18,8 @@ const projects = defineCollection({
     video: z.string().nullable().default(null),
     description: z.string(),
     tagline: z.string().optional(), // one line for the card; falls back to description
+    hero: z.string().nullable().default(null), // media at the top of the detail page; .mp4 autoplays muted. Defaults to `image`
+    heroCaption: z.string().optional(),
     highlights: z.array(z.string()).default([]),
     tech_tags: z.array(z.string()).default([]),
     pageTitle: z.string().optional(), // overrides the <title>; defaults to "<title> - <Category>"

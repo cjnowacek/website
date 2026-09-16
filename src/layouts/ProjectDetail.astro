@@ -9,6 +9,9 @@ const d = project.data;
 const categoryLabel = d.category === 'devops' ? 'Pipeline' : 'Technical Art';
 const categoryHref = d.category === 'devops' ? '/devops' : '/techart';
 const title = d.pageTitle ?? `${d.title} - ${categoryLabel}`;
+// Media first: the card image (or an explicit `hero`) sits under the title.
+const heroSrc = d.hero ?? d.image;
+const heroIsVideo = !!heroSrc && /\.mp4$/i.test(heroSrc);
 ---
 <Layout title={title}>
   <div class="container" style="max-width: 1300px;">
@@ -21,6 +24,17 @@ const title = d.pageTitle ?? `${d.title} - ${categoryLabel}`;
     />
 
     <h2>{d.title}</h2>
+
+    {heroSrc && (
+      <figure class="detail-hero">
+        {heroIsVideo ? (
+          <video src={heroSrc} poster={d.image ?? undefined} autoplay muted loop playsinline aria-label={`${d.title} demo`}></video>
+        ) : (
+          <img src={heroSrc} alt={d.title} width="1200" height="900" fetchpriority="high" />
+        )}
+        {d.heroCaption && <figcaption>{d.heroCaption}</figcaption>}
+      </figure>
+    )}
 
     <slot />
 
