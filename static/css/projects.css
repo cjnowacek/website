@@ -534,6 +534,12 @@
     gap: 30px;
     margin: 30px 0;
     align-items: center;
+    text-align: left; /* text hugs the gutter beside the image, never centred */
+}
+
+.two-column-section h3 {
+    text-align: left;
+    margin-top: 0;
 }
 
 .two-column-reverse {
