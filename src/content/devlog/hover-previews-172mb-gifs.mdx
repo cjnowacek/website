@@ -1,0 +1,30 @@
+---
+title: "Hover previews: from 172 MB gifs to 0.7 MB videos"
+date: 2026-07-12
+summary: The heaviest hover preview on this site was a 172 MB gif that never finished loading. One ffmpeg pass per clip took the whole set from 330 MB to 10 MB.
+tags: [this site, ffmpeg, performance]
+---
+
+The project cards on this site play a motion preview when you hover them. The original
+implementation swapped in an animated gif, and I never checked what those gifs weighed.
+Today I did: the worst one was 172 MB. Hovering that card on a normal connection would never
+finish loading, which means the feature effectively did not exist for visitors.
+
+Three options on the table: re-encode the gifs smaller (still gifs, still huge), animated
+webp (better, but still image-codec economics), or actual video files in a `<video>` tag.
+Gif as a format is just the wrong tool for photographic motion; video codecs exist precisely
+for this. The only historical reason for hover-gifs is autoplay friction, and a muted looping
+video autoplays fine everywhere now.
+
+One ffmpeg pass per clip (h264, crf 28, audio stripped, faststart for instant scrubbing) took
+the full set from roughly 330 MB to 10 MB. The 172 MB gif came out at 0.68 MB, a 250x
+reduction, at visually identical quality for a 4:3 preview tile.
+
+The site change was small: the card component renders a `<video>` when a project defines one,
+the same CSS opacity crossfade handles the reveal, and a few lines of JS play on hover and
+pause on leave. The gifs stay as data fallback. The videos are now small enough to live in git
+and deploy with the site instead of being hand-synced like the rest of the image assets.
+
+Lesson that generalizes: when a feature depends on an asset, the asset's weight is part of the
+feature. Nobody had ever profiled the hover cards, so the heaviest one was silently broken.
+Budget your media like you budget your code.

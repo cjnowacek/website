@@ -1,0 +1,50 @@
+---
+// src/pages/devlog/[...slug].astro — one page per dev log post.
+import { getCollection, render } from 'astro:content';
+import Layout from '../../layouts/Layout.astro';
+import Breadcrumb from '../../components/Breadcrumb.astro';
+import { formatDate } from '../../lib/devlog.js';
+
+export async function getStaticPaths() {
+  const posts = await getCollection('devlog', (p) => !p.data.draft);
+  return posts.map((post) => ({ params: { slug: post.id }, props: { post } }));
+}
+
+const { post } = Astro.props;
+const { Content } = await render(post);
+const d = post.data;
+
+// If the post belongs to a project, link back to that project's page.
+let project = null;
+if (d.project) {
+  const projects = await getCollection('projects');
+  const entry = projects.find((p) => p.id === d.project);
+  if (entry) project = { title: entry.data.title, href: `/${entry.data.category}/${entry.id}/` };
+}
+---
+<Layout title={`${d.title} - Dev Log`} description={d.summary} image={d.image ?? undefined} type="article">
+  <div class="container" style="max-width: 1300px;">
+    <Breadcrumb crumbs={[{ label: 'Home', href: '/' }, { label: 'Dev Log', href: '/devlog' }, { label: d.title }]} />
+
+    <h2>{d.title}</h2>
+    <p class="devlog-meta" style="text-align: center;">
+      <time datetime={d.date.toISOString().slice(0, 10)}>{formatDate(d.date)}</time>
+      {d.tags.length > 0 && <span> &middot; {d.tags.join(' / ')}</span>}
+      {project && <span> &middot; Part of <a href={project.href}>{project.title}</a></span>}
+    </p>
+
+    {d.image && (
+      <figure class="detail-hero">
+        <img src={d.image} alt="" width="1200" height="900" />
+      </figure>
+    )}
+
+    <article class="text-content devlog-body">
+      <Content />
+    </article>
+
+    <div style="display: flex; justify-content: flex-start; margin: 60px 0 40px 0; gap: 20px;">
+      <a href="/devlog" class="project-link project-link-secondary">← All posts</a>
+    </div>
+  </div>
+</Layout>

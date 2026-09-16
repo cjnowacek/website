@@ -3,6 +3,7 @@
 // The MDX body is slotted in below the title.
 import Layout from './Layout.astro';
 import Breadcrumb from '../components/Breadcrumb.astro';
+import { getPostsForProject, formatDate } from '../lib/devlog.js';
 
 const { project } = Astro.props;
 const d = project.data;
@@ -12,6 +13,7 @@ const title = d.pageTitle ?? `${d.title} - ${categoryLabel}`;
 // Media first: the card image (or an explicit `hero`) sits under the title.
 const heroSrc = d.hero ?? d.image;
 const heroIsVideo = !!heroSrc && /\.mp4$/i.test(heroSrc);
+const posts = await getPostsForProject(project.id);
 
 // At-a-glance facts under the hero: what the role was, where, when, with whom.
 const facts = [
@@ -67,6 +69,20 @@ const facts = [
     )}
 
     <slot />
+
+    {posts.length > 0 && (
+      <section class="text-content project-posts">
+        <h3>From the Dev Log</h3>
+        <ul>
+          {posts.map((post) => (
+            <li>
+              <a href={`/devlog/${post.id}/`}>{post.data.title}</a>
+              <span class="devlog-meta"> &middot; {formatDate(post.data.date)}</span>
+            </li>
+          ))}
+        </ul>
+      </section>
+    )}
 
     <div style="display: flex; justify-content: flex-start; margin: 60px 0 40px 0; gap: 20px;">
       <a href={categoryHref} class="project-link" style="background: var(--form-bg); color: var(--text-color);">

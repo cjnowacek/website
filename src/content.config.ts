@@ -35,4 +35,20 @@ const projects = defineCollection({
   }),
 });
 
-export const collections = { projects };
+// Dev log: one .mdx per post under src/content/devlog/, served at /devlog/<id>/.
+// `project` (a project id such as 'smite' or 'ml3ds') attaches the post to that
+// project's page. `draft: true` keeps a post out of the build entirely.
+const devlog = defineCollection({
+  loader: glob({ pattern: '**/*.mdx', base: './src/content/devlog' }),
+  schema: z.object({
+    title: z.string(),
+    date: z.coerce.date(),
+    summary: z.string(), // one or two sentences: the listing, the RSS entry, and the social card
+    tags: z.array(z.string()).default([]),
+    project: z.string().optional(),
+    image: z.string().optional(), // optional lead image / social preview
+    draft: z.boolean().default(false),
+  }),
+});
+
+export const collections = { projects, devlog };

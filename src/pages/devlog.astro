@@ -1,23 +1,12 @@
 ---
-// src/pages/devlog.astro — ported from devlog.php + includes/devlog-posts/.
-// Each post is an entry in the `posts` array below; newest first.
+// src/pages/devlog.astro — the dev log index. Posts live one per file in
+// src/content/devlog/; each gets its own page at /devlog/<slug>/ and the RSS
+// feed at /rss.xml. Workflow: draft privately, publish here (scrubbed, one
+// thing per post), promote to a project page when a topic earns it.
 import Layout from '../layouts/Layout.astro';
+import { getPosts, formatDate } from '../lib/devlog.js';
 
-const posts = [
-  {
-    date: '2026-07-12',
-    title: 'Hover previews: from 172 MB gifs to 0.7 MB videos',
-    tags: ['this site', 'ffmpeg', 'performance'],
-  },
-];
-
-function formatDate(iso) {
-  return new Date(iso + 'T00:00:00').toLocaleDateString('en-US', {
-    year: 'numeric',
-    month: 'long',
-    day: 'numeric',
-  });
-}
+const posts = await getPosts();
 ---
 <Layout title="Dev Log" description="Working notes from CJ Nowacek's pipeline bench: what is being built, what broke, and how it was fixed.">
   <div class="container" style="max-width: 1300px;">
@@ -26,45 +15,22 @@ function formatDate(iso) {
       <p>
         Working notes from the pipeline bench: what I'm building, what broke, and how I thought
         through it. Short entries, posted as the work happens.
+        <a href="/rss.xml" class="devlog-rss">RSS feed</a>
       </p>
     </div>
 
-    <article class="text-content" style="margin-bottom: 50px;">
-      <h3 style="color: var(--header-color); margin-bottom: 4px;">{posts[0].title}</h3>
-      <p style="color: var(--text-secondary); font-size: 14px; margin-top: 0;">
-        {formatDate(posts[0].date)} &middot; {posts[0].tags.join(' / ')}
-      </p>
-      <p>
-        The project cards on this site play a motion preview when you hover them. The original
-        implementation swapped in an animated gif, and I never checked what those gifs weighed.
-        Today I did: the worst one was 172 MB. Hovering that card on a normal connection would never
-        finish loading, which means the feature effectively did not exist for visitors.
-      </p>
-      <p>
-        Three options on the table: re-encode the gifs smaller (still gifs, still huge), animated
-        webp (better, but still image-codec economics), or actual video files in a
-        <code>&lt;video&gt;</code> tag. Gif as a format is just the wrong tool for photographic
-        motion; video codecs exist precisely for this. The only historical reason for hover-gifs is
-        autoplay friction, and a muted looping video autoplays fine everywhere now.
-      </p>
-      <p>
-        One ffmpeg pass per clip (h264, crf 28, audio stripped, faststart for instant scrubbing)
-        took the full set from roughly 330 MB to 10 MB. The 172 MB gif came out at 0.68 MB, a 250x
-        reduction, at visually identical quality for a 4:3 preview tile.
-      </p>
-      <p>
-        The site change was small: the card component renders a <code>&lt;video&gt;</code> when a
-        project defines one, the same CSS opacity crossfade handles the reveal, and a few lines of
-        JS play on hover and pause on leave. The gifs stay as data fallback. The videos are now
-        small enough to live in git and deploy with the site instead of being hand-synced like the
-        rest of the image assets.
-      </p>
-      <p>
-        Lesson that generalizes: when a feature depends on an asset, the asset's weight is part of
-        the feature. Nobody had ever profiled the hover cards, so the heaviest one was silently
-        broken. Budget your media like you budget your code.
-      </p>
-    </article>
-    <hr style="max-width: 800px;" />
+    <div class="devlog-list">
+      {posts.map((post) => (
+        <article class="devlog-entry">
+          <h3><a href={`/devlog/${post.id}/`}>{post.data.title}</a></h3>
+          <p class="devlog-meta">
+            <time datetime={post.data.date.toISOString().slice(0, 10)}>{formatDate(post.data.date)}</time>
+            {post.data.tags.length > 0 && <span> &middot; {post.data.tags.join(' / ')}</span>}
+          </p>
+          <p>{post.data.summary}</p>
+          <a href={`/devlog/${post.id}/`} class="devlog-more">Read the post</a>
+        </article>
+      ))}
+    </div>
   </div>
 </Layout>

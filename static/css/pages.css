@@ -46,6 +46,68 @@
     gap: 1rem;
 }
 
+/* DEV LOG */
+.devlog-list {
+    max-width: 800px;
+    margin: 0 auto;
+    text-align: left;
+}
+
+.devlog-entry {
+    padding: 0 0 2rem;
+    margin: 0 0 2rem;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.devlog-entry h3 {
+    margin: 0 0 0.25rem;
+    font-size: 1.4em;
+}
+
+.devlog-entry h3 a {
+    color: var(--text-color);
+    text-decoration: none;
+}
+
+.devlog-entry h3 a:hover {
+    color: var(--header-color);
+}
+
+.devlog-meta {
+    color: var(--text-secondary);
+    font-size: 14px;
+    margin: 0 0 0.75rem;
+}
+
+.devlog-meta a,
+.devlog-more,
+.devlog-rss {
+    color: var(--header-color);
+}
+
+.devlog-rss {
+    margin-left: 0.5rem;
+    font-size: 0.9em;
+}
+
+.devlog-body p {
+    line-height: 1.65;
+}
+
+.devlog-body code {
+    background: var(--form-bg);
+    padding: 0.1em 0.4em;
+    border-radius: 4px;
+}
+
+.project-posts ul {
+    padding-left: 1.2rem;
+}
+
+.project-posts a {
+    color: var(--header-color);
+}
+
 .about-hero {
     display: flex;
     flex-direction: column;
