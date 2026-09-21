@@ -54,3 +54,8 @@ RewriteRule ^ /%1/ [R=301,L]
 # tools/notes-vps-setup.sh). A redirect rather than a proxy: this host is
 # static Apache, and the app has its own login.
 RewriteRule ^notes/?$ https://notes.cjnowacek.com/ [R=302,L]
+
+# /game -> the Titans & Traitors join page on the droplet (same home as /play,
+# which its own index.php 301s there). Nothing was ever served at /game, so a
+# link handed out in that form 404'd.
+RewriteRule ^game/?$ https://play.cjnowacek.com/ [R=302,L]
