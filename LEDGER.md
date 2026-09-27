@@ -57,6 +57,14 @@ and `static/files/`.
 (newest last; one entry per task: what it did, the gate counts, what review
 found, what is known and accepted)
 
+- 2026-09-26 `plumbing` (adoption's throwaway task, landed 7849893): one
+  comment line in `src/lib/projects.js`. Check `scripts/check-plumbing.sh`,
+  seen red before delegation, green after; retired in the landing commit.
+  Gate at landing: 16 pages, check-dist 67/0, check-php 3/0. Review found
+  the diff exactly as briefed, one file, no gate file touched. The
+  implementer (sonnet) reported honestly that it never saw the check red
+  itself; that is the main session's proof, not its job.
+
 ## Running
 
 (none)
@@ -71,6 +79,12 @@ found, what is known and accepted)
 
 ## Lessons
 
+- 2026-09-26: the main session's shell must not `cd` into a worktree: the
+  harness then treats the worktree as the working directory. Use `git -C`
+  and `( cd ... )` subshells from the main checkout.
+- 2026-09-26: remove a worktree's `node_modules` junction on its own
+  (`[System.IO.Directory]::Delete(path, $false)`) before `git worktree
+  remove`, so nothing can recurse into the main checkout's `node_modules`.
 - 2026-09-26: on Windows, a clone without `core.symlinks=true` builds a site
   with no CSS, PDFs or icons and the build still exits 0. The smoke check
   asserts `dist/static/css/main.css` and the resume PDFs so this cannot pass
