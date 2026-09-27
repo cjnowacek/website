@@ -93,6 +93,25 @@ for (const [file, route] of [
   }
 }
 
+// 3b. Card and hero images are responsive. An <img> whose src is a
+// *-webp-1200x900.webp card image must offer the 800x600 variant too and say
+// how wide it renders, or every visitor downloads 1200x900 for a 420px card.
+let responsive = 0;
+for (const f of walk(dist).filter((f) => f.endsWith('.html'))) {
+  const rel = posix(relative(dist, f));
+  for (const m of read(f).matchAll(/<img[^>]*>/g)) {
+    const tag = m[0];
+    const src = (tag.match(/src="([^"]+)"/) || [])[1] || '';
+    if (!/-webp-1200x900\.webp$/.test(src)) continue;
+    responsive++;
+    const name = src.split('/').pop();
+    const small = src.replace('-1200x900.webp', '-800x600.webp');
+    check(tag.includes(`${small} 800w`) && tag.includes(`${src} 1200w`), `${rel}: <img ${name}> lacks an 800w/1200w srcset`);
+    check(/sizes="[^"]+"/.test(tag), `${rel}: <img ${name}> has no sizes attribute`);
+  }
+}
+check(responsive > 0, 'no card images found in the built pages');
+
 // 4. Files the site cannot work without.
 for (const f of ['.htaccess', 'includes/contact_handler.php', 'rss.xml', 'sitemap-index.xml', 'static/css/main.css']) {
   check(existsSync(join(dist, f)), `${f} missing from dist`);
