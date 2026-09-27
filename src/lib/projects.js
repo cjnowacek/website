@@ -9,6 +9,7 @@ export function toCard(entry) {
 }
 
 // Fetch card-shaped projects by explicit ids, preserving the given order.
+// An id that matches no entry is dropped without error; scripts/check-dist.mjs catches a listing page that names one.
 export async function getProjectCards(ids) {
   const all = await getCollection('projects', (e) => !e.data.draft);
   const byId = new Map(all.map((e) => [e.id, e]));
