@@ -1,0 +1,14 @@
+# .claude/gate: the files only the main session edits. Read by
+# .claude/hooks/gate-guard.py, which refuses a subagent's Edit/Write on any
+# of them. One path or pattern per line, relative to the repo root; a path
+# covers everything under it; `*` matches across `/`. `#` starts a comment.
+# `.claude/`, `CLAUDE.md` and `LEDGER.md` are protected without being listed.
+scripts/                 # check-dist.mjs, check-php.sh: the checks themselves
+package.json             # the build command and the dependency set
+package-lock.json
+astro.config.mjs
+src/content.config.ts    # the project/devlog frontmatter schema the build validates against
+.github/workflows/       # deploy.yml: what a push to main does to production
+deploy.sh
+deploy-play.sh
+static/files/            # resume PDFs, written only by the Resume-with-Tex CI

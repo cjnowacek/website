@@ -17,3 +17,6 @@ dist/
 
 # Nested working clones (not part of the site)
 /resume-with-tex/
+
+# Subagent worktrees (gated subagent workflow; see LEDGER.md)
+.claude/worktrees/
