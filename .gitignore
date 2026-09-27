@@ -8,6 +8,7 @@ public/includes/contact_submissions.json
 /static/img/project-cards/*
 !/static/img/project-cards/video/
 !/static/img/project-cards/ml3ds-webp-1200x900.webp
+!/static/img/project-cards/ml3ds-webp-800x600.webp
 
 # Astro / Node
 node_modules/
