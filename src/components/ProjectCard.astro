@@ -8,12 +8,22 @@ const { project } = Astro.props;
 const hasVideo = !!project.video;
 const tags = (project.tech_tags ?? []).slice(0, 3);
 const tagline = project.tagline ?? project.description;
+const small = project.image && project.image.endsWith('-webp-1200x900.webp')
+  ? project.image.replace('-1200x900.webp', '-800x600.webp')
+  : null;
 ---
 <a class="project-card" href={project.link}>
   <div class="project-media">
     {project.image ? (
       <>
-        <img src={project.image} alt="" loading="lazy" width="1200" height="900" />
+        <img
+          src={project.image}
+          srcset={small ? `${small} 800w, ${project.image} 1200w` : undefined}
+          sizes={small ? '(max-width: 600px) 100vw, (max-width: 900px) 50vw, 420px' : undefined}
+          alt=""
+          loading="lazy"
+          width="1200"
+          height="900" />
         {hasVideo && (
           <video
             class="hover-video"

@@ -13,6 +13,9 @@ const title = d.pageTitle ?? `${d.title} - ${categoryLabel}`;
 // Media first: the card image (or an explicit `hero`) sits under the title.
 const heroSrc = d.hero ?? d.image;
 const heroIsVideo = !!heroSrc && /\.mp4$/i.test(heroSrc);
+const heroSmall = heroSrc && heroSrc.endsWith('-webp-1200x900.webp')
+  ? heroSrc.replace('-1200x900.webp', '-800x600.webp')
+  : null;
 const posts = await getPostsForProject(project.id);
 
 // At-a-glance facts under the hero: what the role was, where, when, with whom.
@@ -41,7 +44,14 @@ const facts = [
         {heroIsVideo ? (
           <video src={heroSrc} poster={d.image ?? undefined} autoplay muted loop playsinline aria-label={`${d.title} demo`}></video>
         ) : (
-          <img src={heroSrc} alt={d.title} width="1200" height="900" fetchpriority="high" />
+          <img
+            src={heroSrc}
+            srcset={heroSmall ? `${heroSmall} 800w, ${heroSrc} 1200w` : undefined}
+            sizes={heroSmall ? '(max-width: 1300px) 100vw, 1300px' : undefined}
+            alt={d.title}
+            width="1200"
+            height="900"
+            fetchpriority="high" />
         )}
         {d.heroCaption && <figcaption>{d.heroCaption}</figcaption>}
       </figure>
