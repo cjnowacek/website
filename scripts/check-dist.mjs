@@ -99,15 +99,15 @@ for (const [file, route] of [
 let responsive = 0;
 for (const f of walk(dist).filter((f) => f.endsWith('.html'))) {
   const rel = posix(relative(dist, f));
-  for (const m of read(f).matchAll(/<img[^>]*>/g)) {
+  for (const m of read(f).matchAll(/<img[\s>][^>]*>/g)) {
     const tag = m[0];
-    const src = (tag.match(/src="([^"]+)"/) || [])[1] || '';
-    if (!/-webp-1200x900\.webp$/.test(src)) continue;
+    const src = (tag.match(/[\s"]src="([^"]+)"/) || [])[1] || '';
+    if (!src.endsWith('-webp-1200x900.webp')) continue;
     responsive++;
     const name = src.split('/').pop();
     const small = src.replace('-1200x900.webp', '-800x600.webp');
     check(tag.includes(`${small} 800w`) && tag.includes(`${src} 1200w`), `${rel}: <img ${name}> lacks an 800w/1200w srcset`);
-    check(/sizes="[^"]+"/.test(tag), `${rel}: <img ${name}> has no sizes attribute`);
+    check(/\ssizes="[^"]+"/.test(tag), `${rel}: <img ${name}> has no sizes attribute`);
   }
 }
 check(responsive > 0, 'no card images found in the built pages');
