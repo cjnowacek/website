@@ -12,8 +12,8 @@
 //   - the files the site cannot work without shipped: .htaccess with its
 //     legacy-URL redirect rules, the contact handler the contact page posts
 //     to, RSS, the sitemap, the CSS, and every resume PDF a page links to;
-//   - the Shore House page: the nav links /shore-house, it was built, every
-//     live entry in src/content/models has its <model-viewer> with its .glb
+//   - the Other page (/other/, the Shore House scans): the nav links it, it
+//     was built, every live entry in src/content/models has its <model-viewer> with its .glb
 //     and poster, no draft does, the viewer library is bundled, and (on the
 //     machine that has the Dropbox sync folder) every .glb and poster the
 //     entries name exists there and is within budget;
@@ -112,7 +112,7 @@ for (const f of walk(join(root, 'src/pages')).filter((f) => f.endsWith('.astro')
 check(pdfs.size >= 2, `expected the two resume PDFs to be linked from pages, found ${pdfs.size}`);
 for (const p of pdfs) check(existsSync(join(dist, p)), `${p} is linked but missing from dist`);
 
-// 5. Shore House models: src/content/models -> /shore-house/.
+// 5. Shore House models: src/content/models -> /other/ (the Other Projects page).
 const modelsDir = join(root, 'src/content/models');
 const models = (existsSync(modelsDir) ? walk(modelsDir) : [])
   .filter((f) => f.endsWith('.mdx'))
@@ -123,20 +123,20 @@ const models = (existsSync(modelsDir) ? walk(modelsDir) : [])
   });
 const liveModels = models.filter((m) => !m.draft);
 check(liveModels.length > 0, 'no live model entries under src/content/models');
-check(navItems.some(([href]) => href === '/shore-house'), 'nav does not link /shore-house');
-check(existsSync(page('/shore-house')), '/shore-house/ was not built');
-const shore = read(page('/shore-house'));
+check(navItems.some(([href]) => href === '/other'), 'nav does not link /other');
+check(existsSync(page('/other')), '/other/ was not built');
+const shore = read(page('/other'));
 const viewers = (shore.match(/<model-viewer\b/g) || []).length;
-check(viewers === liveModels.length, `/shore-house/ has ${viewers} <model-viewer> elements for ${liveModels.length} live entries`);
+check(viewers === liveModels.length, `/other/ has ${viewers} <model-viewer> elements for ${liveModels.length} live entries`);
 for (const m of models) {
   if (m.draft) {
-    check(!shore.includes(m.file), `draft model ${m.id} is on /shore-house/`);
+    check(!shore.includes(m.file), `draft model ${m.id} is on /other/`);
     continue;
   }
   check(m.file.startsWith('/static/img/models/') && m.file.endsWith('.glb'), `model ${m.id}: file '${m.file}' is not a .glb under /static/img/models/`);
   check(m.poster.startsWith('/static/img/models/'), `model ${m.id}: poster '${m.poster}' is not under /static/img/models/`);
-  check(shore.includes(`src="${m.file}"`), `/shore-house/ has no viewer with src="${m.file}" (${m.id})`);
-  check(shore.includes(`poster="${m.poster}"`), `/shore-house/ has no viewer with poster="${m.poster}" (${m.id})`);
+  check(shore.includes(`src="${m.file}"`), `/other/ has no viewer with src="${m.file}" (${m.id})`);
+  check(shore.includes(`poster="${m.poster}"`), `/other/ has no viewer with poster="${m.poster}" (${m.id})`);
 }
 const astroDir = join(dist, '_astro');
 const bundled = (existsSync(astroDir) ? walk(astroDir) : []).some((f) => f.endsWith('.js') && statSync(f).size > 300 * 1024 && read(f).includes('model-viewer'));

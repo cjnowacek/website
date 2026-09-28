@@ -53,7 +53,7 @@ const devlog = defineCollection({
 });
 
 // Shore House: one .mdx per LiDAR room scan under src/content/models/, all
-// shown on /shore-house/ (src/pages/shore-house.astro). `file` and `poster` are
+// shown on /other/ (src/pages/other.astro, the Other Projects page). `file` and `poster` are
 // URLs under /static/img/models/, which is Dropbox ~sync/models via the image
 // sync, not git; scripts/build-models.mjs makes the .glb display versions.
 // The body is an optional caption under the viewer.
