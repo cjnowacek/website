@@ -86,7 +86,8 @@ for name, o in objects.items():
     rid, title, group = ROOMS[name]
     file_slug = rid if list(v[0] for v in ROOMS.values()).count(rid) == 1 else f"{rid}-{slug(name)}"
     if write_glb:
-        bpy.ops.object.select_all(action='DESELECT')
+        for other in bpy.data.objects:  # not the operator: it is a no-op in background mode, and the exports accumulated
+            other.select_set(False)
         o.hide_set(False)
         o.hide_viewport = False
         o.select_set(True)
