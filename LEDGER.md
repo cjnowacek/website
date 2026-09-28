@@ -95,6 +95,31 @@ found, what is known and accepted)
   the home page directly since it is no longer a nav route. Gate: 18 pages,
   233/0, 3/0.
 
+- 2026-09-27 `explore` (landed 34c738a, fast-forward of `subagent/explore`,
+  7 commits): the noclip-style walkthrough at `/other/shore-house/explore/`
+  (full-screen three.js, fly camera, room list with teleport, per-room
+  show/hide, camera in the URL hash, copy link, touch stick), reached by a
+  button on the Shore House project page. Rooms come from the Blender file
+  (`scripts/export-shore-house.py`: the hand-placed Lidar meshes, world
+  space) through the model recipe into `~sync/models/world/` (18 files,
+  14 MB), rsynced to the host from WSL. `three` 0.183.2 is a direct
+  dependency, pinned to model-viewer's. Also: the northeast and southeast
+  bedrooms moved to the downstairs group (they are on the ground floor),
+  and a referer check in `.htaccess` on `/static/img/models/*.glb` (the
+  user's choice after the research below). Gate at landing: 19 pages,
+  check-dist 294/0, check-php 3/0. Review: scope exact, no gate file
+  touched, diff read (502 lines of viewer JS), headless fly-through from
+  five viewpoints plus a move-and-drag test on the production build,
+  phone width, and every movement key tested with focus on body, canvas,
+  checkbox and button. The user's look found A/S/D "not working": one real
+  defect (keys were ignored while a checkbox or button had focus; fixed in
+  6ec0d47, main session) and one environmental (the Vimium-style extension
+  in the user's Chrome takes the letter d). Known and accepted: all rooms
+  load on entry (14 MB), by design for a walkthrough; the scans are patchy
+  inside, the rebuild layer will replace that; the referer check is a
+  speed bump, not a lock.
+
+
 ## Running
 
 - `card-srcset` (branch `subagent/card-srcset`, worktree
@@ -108,31 +133,6 @@ found, what is known and accepted)
   a1564fd. Gate on it is green except `check-media` on the five Dropbox card
   images that item 3 under Next replaces; lands together with those assets
   after the user's look.
-- `explore` (branch `subagent/explore`, worktree `.claude/worktrees/explore`,
-  junctions: `node_modules`, `static/img/models`): the noclip-style
-  walkthrough at `/other/shore-house/explore/`. The user (2026-09-27): "is
-  there a way to set it up like https://noclip.website/" then "yes. I am
-  eventually going to make a cleaned up model. full version". Gate commits by
-  the main session: d5ca29d (`three` 0.183.2 as a direct dependency, pinned
-  to model-viewer's; `scripts/export-shore-house.py`;
-  `src/data/shore-house-explore.json`; checks; red 274/38), 1bf7575 and
-  e818970 (export fixes: manual deselect, missing-image relink, `--only`).
-  Why the Blender file and not the raw scans: the scans in the .blend were
-  cropped, rotated and placed in edit mode, so the placement is in the mesh
-  data and no object transform reproduces it with the original files; the
-  export takes the placed meshes themselves (17 rooms, two east-side scans
-  merged), world space, glTF Y-up. Assets: `~sync/models/world/*.glb`
-  (18 files, 14 MB, 0.3 to 2.3 MB each), synced into `static/img/models/world`,
-  NOT yet on the host. Layout verified by three Blender renders (top-down,
-  three-quarter, inside the front hall): rooms adjoin, street north (-z in
-  glTF), backyard south. Delegated to the implementer on opus (controls are
-  judgement) with `brief-explore.md` in the session scratch: full-screen
-  three.js page, fly camera, room list with teleport, per-room show/hide,
-  camera in the URL hash, copy link, touch stick, data structured in layers
-  for the rebuild to come. Also in that brief: the CTA on the project page
-  and the northeast/southeast bedroom entries moved to the downstairs group
-  (they are on the ground floor).
-
 ## Next, in order
 
 Sitting 2026-09-26, "optimization". Measured first (Chrome, live site):
@@ -184,11 +184,18 @@ Pipeline, all done and reproducible:
   `document.hidden`, and model-viewer never renders a hidden tab.
 
 5. `models-section`: landed 2026-09-27 (see Landed), assets rsynced.
-6. `viewer-chunk` (main session or implementer, small): import
+6. `rebuild-layer` (when the cleaned-up model exists): export
+   `meshes/baked/` from the Blender file the same way (a second entry in
+   `ROOMS`-like table or a collection walk), add a layer
+   `{ id: 'rebuild', label: ... }` to `shore-house-explore.json`; the page
+   already renders layers from data. Note the baked `T_*.tga` textures the
+   file references are missing on disk (the export logged 30 of them); the
+   current textures are in `textures/rooms/` per that project's notes.
+7. `viewer-chunk` (main session or implementer, small): import
    `@google/model-viewer/dist/model-viewer-module.min.js` instead of the
    package entry so the first click fetches 140 KB gzipped, not 290 KB.
    Check: the bundled chunk under 600 KB.
-7. Later, if wanted: room captions (the `.mdx` bodies), the blockmesh stage
+8. Later, if wanted: room captions (the `.mdx` bodies), the blockmesh stage
    and the clean house exported from save 46 as further entries, a
    hand-rolled three.js viewer with skeleton and clip switching for
    rigging work.
@@ -206,6 +213,12 @@ Pipeline, all done and reproducible:
 - Card images at quality 80: approve the re-encodes staged in the session
   scratch (`assets-out/project-cards`) before they overwrite `~sync`? The
   1200x900 set goes from 6.7 MB to 0.6 MB; crops looked identical.
+- Downloads of the models cannot be prevented in a browser viewer; the user
+  asked for research (2026-09-27) and chose the referer check knowing it is
+  a speed bump. The ladder, if it ever matters more: signed short-lived
+  URLs (PHP on the host), encrypted files decoded in JS (defeated by GPU
+  capture), remote rendering (the only lock; a GPU server). Only display
+  versions are online.
 - 3D viewer: the choices above (label "Shore House", model-viewer, groups,
   the draft, empty captions) were made without the user; any of them is one
   line to change before it lands. Also: the scans are of a family home;
