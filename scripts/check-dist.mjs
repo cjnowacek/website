@@ -12,6 +12,11 @@
 //   - the files the site cannot work without shipped: .htaccess with its
 //     legacy-URL redirect rules, the contact handler the contact page posts
 //     to, RSS, the sitemap, the CSS, and every resume PDF a page links to;
+//   - the Shore House page: the nav links /shore-house, it was built, every
+//     live entry in src/content/models has its <model-viewer> with its .glb
+//     and poster, no draft does, the viewer library is bundled, and (on the
+//     machine that has the Dropbox sync folder) every .glb and poster the
+//     entries name exists there and is within budget;
 //   - no built page contains an em dash (site copy rule in CLAUDE.md).
 // Exit 0 prints "check-dist: N checks, 0 failed"; exit 1 lists each failure.
 import { existsSync, readFileSync, readdirSync, statSync } from 'node:fs';
@@ -107,7 +112,54 @@ for (const f of walk(join(root, 'src/pages')).filter((f) => f.endsWith('.astro')
 check(pdfs.size >= 2, `expected the two resume PDFs to be linked from pages, found ${pdfs.size}`);
 for (const p of pdfs) check(existsSync(join(dist, p)), `${p} is linked but missing from dist`);
 
-// 5. No em dash in any built page.
+// 5. Shore House models: src/content/models -> /shore-house/.
+const modelsDir = join(root, 'src/content/models');
+const models = (existsSync(modelsDir) ? walk(modelsDir) : [])
+  .filter((f) => f.endsWith('.mdx'))
+  .map((f) => {
+    const fm = read(f).split(/^---\s*$/m)[1] || '';
+    const field = (k) => (fm.match(new RegExp(`^${k}:\s*(.+)$`, 'm')) || [])[1]?.trim().replace(/^['"]|['"]$/g, '') || '';
+    return { id: posix(relative(modelsDir, f)).replace(/\.mdx$/, ''), file: field('file'), poster: field('poster'), draft: /^true/.test(field('draft')) };
+  });
+const liveModels = models.filter((m) => !m.draft);
+check(liveModels.length > 0, 'no live model entries under src/content/models');
+check(navItems.some(([href]) => href === '/shore-house'), 'nav does not link /shore-house');
+check(existsSync(page('/shore-house')), '/shore-house/ was not built');
+const shore = read(page('/shore-house'));
+const viewers = (shore.match(/<model-viewer/g) || []).length;
+check(viewers === liveModels.length, `/shore-house/ has ${viewers} <model-viewer> elements for ${liveModels.length} live entries`);
+for (const m of models) {
+  if (m.draft) {
+    check(!shore.includes(m.file), `draft model ${m.id} is on /shore-house/`);
+    continue;
+  }
+  check(m.file.startsWith('/static/img/models/') && m.file.endsWith('.glb'), `model ${m.id}: file '${m.file}' is not a .glb under /static/img/models/`);
+  check(m.poster.startsWith('/static/img/models/'), `model ${m.id}: poster '${m.poster}' is not under /static/img/models/`);
+  check(shore.includes(`src="${m.file}"`), `/shore-house/ has no viewer with src="${m.file}" (${m.id})`);
+  check(shore.includes(`poster="${m.poster}"`), `/shore-house/ has no viewer with poster="${m.poster}" (${m.id})`);
+}
+const astroDir = join(dist, '_astro');
+const bundled = (existsSync(astroDir) ? walk(astroDir) : []).some((f) => f.endsWith('.js') && statSync(f).size > 300 * 1024 && read(f).includes('model-viewer'));
+check(bundled, 'the model-viewer library is not bundled under dist/_astro (a chunk over 300 KB that names model-viewer)');
+// The model files are Dropbox-synced (~sync/models -> static/img/models), so
+// a typo in `file` or `poster` is a 404 the build cannot see. Where that
+// folder exists (the main session's machine) each named file must be there
+// and within budget: a room 4 MB, a poster 200 KB.
+const SYNC = 'C:/Dropbox/1-career/web-assets/~sync';
+let syncNote = 'Dropbox sync folder absent, model files not checked';
+if (existsSync(SYNC)) {
+  syncNote = `${liveModels.length} model entries checked against ~sync`;
+  const budgets = [['file', 4 * 1024 * 1024], ['poster', 200 * 1024]];
+  for (const m of liveModels) {
+    for (const [key, limit] of budgets) {
+      const local = join(SYNC, m[key].replace(/^\/static\/img\//, ''));
+      check(existsSync(local), `model ${m.id}: ${key} ${m[key]} is not in ~sync (${local})`);
+      if (existsSync(local)) check(statSync(local).size <= limit, `model ${m.id}: ${key} ${m[key]} is ${Math.round(statSync(local).size / 1024)} KB, budget ${Math.round(limit / 1024)} KB`);
+    }
+  }
+}
+
+// 6. No em dash in any built page.
 const pages = walk(dist).filter((f) => f.endsWith('.html'));
 check(pages.length >= navItems.length + 1, `only ${pages.length} html pages built`);
 for (const f of pages) check(!read(f).includes('—'), `${posix(relative(dist, f))} contains an em dash`);
@@ -117,4 +169,4 @@ if (failures.length) {
   console.error(`check-dist: ${checks} checks, ${failures.length} failed`);
   process.exit(1);
 }
-console.log(`check-dist: ${checks} checks, 0 failed (${pages.length} pages, ${projects.filter((p) => !p.draft).length} projects, ${rules} redirect rules)`);
+console.log(`check-dist: ${checks} checks, 0 failed (${pages.length} pages, ${projects.filter((p) => !p.draft).length} projects, ${liveModels.length} models, ${rules} redirect rules; ${syncNote})`);

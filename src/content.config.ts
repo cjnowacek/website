@@ -52,4 +52,21 @@ const devlog = defineCollection({
   }),
 });
 
-export const collections = { projects, devlog };
+// Shore House: one .mdx per LiDAR room scan under src/content/models/, all
+// shown on /shore-house/ (src/pages/shore-house.astro). `file` and `poster` are
+// URLs under /static/img/models/, which is Dropbox ~sync/models via the image
+// sync, not git; scripts/build-models.mjs makes the .glb display versions.
+// The body is an optional caption under the viewer.
+const models = defineCollection({
+  loader: glob({ pattern: '**/*.mdx', base: './src/content/models' }),
+  schema: z.object({
+    title: z.string(),
+    file: z.string(), // the .glb, e.g. /static/img/models/kitchen.glb
+    poster: z.string(), // the still shown until the visitor clicks, e.g. /static/img/models/kitchen-800x600.webp
+    group: z.enum(['outside', 'downstairs', 'upstairs']), // the heading it sits under
+    order: z.number().default(999), // within its group, ascending
+    draft: z.boolean().default(false), // true: not built, not listed
+  }),
+});
+
+export const collections = { projects, devlog, models };
