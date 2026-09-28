@@ -1,0 +1,36 @@
+---
+// src/components/ModelViewer.astro — one LiDAR room scan on /shore-house/.
+// Before the viewer library loads, <model-viewer> is an unknown element, so
+// its children (the poster image and the button) are what a visitor sees,
+// and the page ships no viewer JavaScript of its own.
+import { render } from 'astro:content';
+
+interface Props {
+  entry: any;
+}
+
+const { entry } = Astro.props;
+const { title, file, poster } = entry.data;
+const { Content } = await render(entry);
+---
+<figure class="model-card">
+  <model-viewer
+    src={file}
+    poster={poster}
+    alt={`3D scan: ${title}`}
+    camera-controls
+    touch-action="pan-y"
+    reveal="interaction"
+    camera-orbit="-30deg 60deg 80%"
+    interaction-prompt="none"
+    shadow-intensity="0"
+    loading="lazy"
+  >
+    <img slot="poster" src={poster} alt="" width="800" height="600" loading="lazy" decoding="async" />
+    <button slot="poster" class="model-card-play" type="button">View in 3D</button>
+  </model-viewer>
+  <figcaption>
+    <h3>{title}</h3>
+    <Content />
+  </figcaption>
+</figure>

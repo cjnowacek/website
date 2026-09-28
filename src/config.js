@@ -8,6 +8,7 @@ export const navItems = [
   ['/techart', 'Tech Art'],
   ['/devops', 'Pipeline'],
   ['/devlog', 'Dev Log'],
+  ['/shore-house', 'Shore House'],
   ['/about', 'About'],
   ['/contact', 'Contact'],
 ];
