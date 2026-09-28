@@ -81,8 +81,8 @@ found, what is known and accepted)
   bytes, fixed in 41c2a4c); the main session's look found the card-shrink
   bug fixed in 02009e8. The user looked twice: first at a standalone tab
   ("this is good" but no tab of its own), then asked for the card grid.
-  Known and accepted: the viewer chunk is 1,070 KB (290 KB gzipped) where
-  the package's prebuilt module is 464 KB (140 KB); captions are empty;
+  Known and accepted: the viewer library is about 1 MB on the first click
+  (see Next item 7 for why that stays); captions are empty;
   the "initial test" scan is a draft; the posters were rendered once by
   model-viewer in headless Chrome and the tool for that lives only in the
   session scratch (recreate from the ledger notes under Next, or
@@ -191,10 +191,13 @@ Pipeline, all done and reproducible:
    already renders layers from data. Note the baked `T_*.tga` textures the
    file references are missing on disk (the export logged 30 of them); the
    current textures are in `textures/rooms/` per that project's notes.
-7. `viewer-chunk` (main session or implementer, small): import
-   `@google/model-viewer/dist/model-viewer-module.min.js` instead of the
-   package entry so the first click fetches 140 KB gzipped, not 290 KB.
-   Check: the bundled chunk under 600 KB.
+7. `viewer-chunk`: DROPPED 2026-09-27 after measuring. The premise was
+   wrong: model-viewer's 463 KB `model-viewer-module.min.js` is small only
+   because it leaves three.js out (it imports 'three'), and the full
+   bundle is 1,043 KB. The build already does the best split: a 423 KB
+   model-viewer chunk plus a 624 KB three chunk that the walkthrough page
+   shares (and the browser caches between the two). Nothing to gain
+   without dropping three, which is not on the table.
 8. Later, if wanted: room captions (the `.mdx` bodies), the blockmesh stage
    and the clean house exported from save 46 as further entries, a
    hand-rolled three.js viewer with skeleton and clip switching for
