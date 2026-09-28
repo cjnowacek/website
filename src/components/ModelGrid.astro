@@ -1,0 +1,38 @@
+---
+// src/components/ModelGrid.astro: the Shore House scans, grouped, each in a
+// ModelViewer. Used from the shore-house project's MDX body.
+import { getModels, groups } from '../lib/models.js';
+import ModelViewer from './ModelViewer.astro';
+const models = await getModels();
+---
+<div class="model-groups">
+  {groups.map(([key, label]) => {
+    const items = models.filter((m) => m.data.group === key);
+    return (
+      items.length > 0 && (
+        <>
+          <h3>{label}</h3>
+          <div class="model-grid">
+            {items.map((entry) => <ModelViewer entry={entry} />)}
+          </div>
+        </>
+      )
+    );
+  })}
+</div>
+
+<script>
+  // The viewer library (about 1 MB) loads on the first click on any room, not
+  // with the page. That click happened before the element was upgraded, so
+  // after the import we dismiss the clicked room's poster ourselves; from then
+  // on model-viewer handles clicks itself (reveal="interaction").
+  let lib;
+  const load = () => (lib ??= import('@google/model-viewer'));
+  for (const mv of document.querySelectorAll('model-viewer')) {
+    mv.addEventListener('click', async () => {
+      await load();
+      await customElements.whenDefined('model-viewer');
+      mv.dismissPoster();
+    }, { once: true });
+  }
+</script>

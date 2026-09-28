@@ -1,0 +1,20 @@
+---
+// src/pages/other/[...slug].astro — renders every Other project detail page
+// from the projects collection. id (e.g. 'shore-house') becomes /other/<id>.
+import { getCollection, render } from 'astro:content';
+import ProjectDetail from '../../layouts/ProjectDetail.astro';
+
+export async function getStaticPaths() {
+  const projects = await getCollection('projects', (p) => p.data.category === 'other' && !p.data.draft);
+  return projects.map((project) => ({
+    params: { slug: project.id },
+    props: { project },
+  }));
+}
+
+const { project } = Astro.props;
+const { Content } = await render(project);
+---
+<ProjectDetail project={project}>
+  <Content />
+</ProjectDetail>

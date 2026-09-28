@@ -1,0 +1,27 @@
+---
+title: Shore House
+tagline: LiDAR scans of a family house, room by room, and the Blender rebuild traced over them
+category: other
+order: 1
+image: /static/img/project-cards/shore-house-webp-1200x900.webp
+heroCaption: The front of the house as the phone scanned it. Click any room below to look around it.
+description: >-
+  Room-by-room iPhone LiDAR scans of my family's shore house in New Jersey, cut down for the
+  browser, and the reference for a clean Blender rebuild that is still in progress.
+tech_tags: [Blender, iPhone LiDAR, glTF]
+meta:
+  role: Scanning, modeling, texturing
+  duration: 2025 to present
+  team_size: Solo
+---
+import ModelGrid from '../../components/ModelGrid.astro';
+
+<div class="about-text" style="max-width: 800px; margin: 0 auto 40px auto; text-align: left;">
+
+Room-by-room LiDAR scans of my family's shore house in New Jersey, captured on an iPhone in the summer of 2025. They are the reference for a clean Blender rebuild of the house that is still in progress: each room is traced over its scan, then baked to its own texture. The scans themselves are raw, seams and all, which is part of what I like about them.
+
+Click a room to load it, then drag to orbit and scroll or pinch to zoom. Each scan was cut down for the browser with gltf-transform (welded, simplified, quantized, its 8K texture re-encoded to a 1024 px WebP), so a room is a few hundred kilobytes to a megabyte and nothing loads until you ask for it.
+
+</div>
+
+<ModelGrid />

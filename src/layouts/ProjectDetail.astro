@@ -7,8 +7,12 @@ import { getPostsForProject, formatDate } from '../lib/devlog.js';
 
 const { project } = Astro.props;
 const d = project.data;
-const categoryLabel = d.category === 'devops' ? 'Pipeline' : 'Technical Art';
-const categoryHref = d.category === 'devops' ? '/devops' : '/techart';
+const categories = {
+  techart: ['Technical Art', '/techart'],
+  devops: ['Pipeline', '/devops'],
+  other: ['Other Projects', '/other'],
+};
+const [categoryLabel, categoryHref] = categories[d.category];
 const title = d.pageTitle ?? `${d.title} - ${categoryLabel}`;
 // Media first: the card image (or an explicit `hero`) sits under the title.
 const heroSrc = d.hero ?? d.image;

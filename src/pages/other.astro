@@ -1,0 +1,25 @@
+---
+// src/pages/other.astro — Other Projects listing: work outside the two
+// portfolio tracks, one project card at a time (see src/content/projects,
+// category: 'other'). Modelled on src/pages/techart.astro.
+import Layout from '../layouts/Layout.astro';
+import ProjectCard from '../components/ProjectCard.astro';
+import { getProjectCards } from '../lib/projects.js';
+
+const otherProjects = await getProjectCards(['shore-house']);
+---
+<Layout title="Other Projects" description="Side projects by CJ Nowacek outside the pipeline and technical art tracks: 3D scans, experiments, and things built for the fun of it.">
+  <div class="container" style="max-width: 1300px;">
+    <h2>Other Projects</h2>
+
+    <hr />
+
+    <div class="about-text" style="max-width: 800px; margin: 0 auto 40px auto; text-align: left;">
+      <p>Work that belongs to neither portfolio track: personal projects, experiments, and things built for the fun of it.</p>
+    </div>
+
+    <div class="projects-container projects-container-grid">
+      {otherProjects.map((project) => <ProjectCard project={project} />)}
+    </div>
+  </div>
+</Layout>

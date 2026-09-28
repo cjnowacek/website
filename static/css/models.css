@@ -57,10 +57,11 @@ model-viewer img[slot="poster"] {
     background: var(--button-hover);
 }
 
-.model-card figcaption h3 {
+.model-card .model-card-title {
     margin: 12px 0 4px;
     font-size: 1.1rem;
     font-family: Cambria, Georgia, serif;
+    font-weight: bold;
 }
 
 .model-card figcaption p {
