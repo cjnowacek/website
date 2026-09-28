@@ -17,6 +17,10 @@
 //     and poster, no draft does, the viewer library is bundled, and (on the
 //     machine that has the Dropbox sync folder) every .glb and poster the
 //     entries name exists there and is within budget;
+//   - the Shore House walkthrough (/other/shore-house/explore/): built, linked
+//     from the project page, carrying every room of src/data/shore-house-explore.json
+//     in its embedded data, its three.js chunk bundled, and (where the Dropbox
+//     sync folder exists) every room file present and within budget;
 //   - no built page contains an em dash (site copy rule in CLAUDE.md).
 // Exit 0 prints "check-dist: N checks, 0 failed"; exit 1 lists each failure.
 import { existsSync, readFileSync, readdirSync, statSync } from 'node:fs';
@@ -163,7 +167,35 @@ if (existsSync(SYNC)) {
   }
 }
 
-// 6. No em dash in any built page.
+// 6. The Shore House walkthrough: src/data/shore-house-explore.json -> /other/shore-house/explore/.
+const exploreRoute = '/other/shore-house/explore';
+const layoutFile = join(root, 'src/data/shore-house-explore.json');
+check(existsSync(layoutFile), 'src/data/shore-house-explore.json is missing (scripts/export-shore-house.py writes it)');
+const layout = existsSync(layoutFile) ? JSON.parse(readFileSync(layoutFile, 'utf8')) : { layers: [] };
+const rooms = layout.layers.flatMap((l) => l.rooms);
+check(rooms.length >= 10, `the walkthrough layout has ${rooms.length} rooms, expected at least 10`);
+check(existsSync(page(exploreRoute)), `${exploreRoute}/ was not built`);
+const explore = read(page(exploreRoute));
+check(shore.includes(`href="${exploreRoute}/"`), `${shoreRoute}/ does not link to ${exploreRoute}/`);
+const dataTag = explore.match(/<script type="application\/json" id="explore-data">([^<]*)<\/script>/);
+check(!!dataTag, `${exploreRoute}/ has no <script type="application/json" id="explore-data">`);
+let embedded = { layers: [] };
+if (dataTag) {
+  try { embedded = JSON.parse(dataTag[1]); } catch (e) { check(false, `${exploreRoute}/ explore-data is not JSON: ${e.message}`); }
+}
+const embeddedIds = new Set(embedded.layers.flatMap((l) => l.rooms.map((r) => r.id)));
+for (const r of rooms) check(embeddedIds.has(r.id), `${exploreRoute}/ embedded data lacks room ${r.id}`);
+const threeBundled = (existsSync(astroDir) ? walk(astroDir) : []).some((f) => f.endsWith('.js') && statSync(f).size > 100 * 1024 && read(f).includes('WebGLRenderer'));
+check(threeBundled, 'the three.js chunk is not bundled under dist/_astro (a chunk over 100 KB that names WebGLRenderer)');
+if (existsSync(SYNC)) {
+  for (const r of rooms) for (const f of r.files) {
+    const local = join(SYNC, (layout.base || '/static/img/models/world/').replace('/static/img/', ''), f);
+    check(existsSync(local), `walkthrough room ${r.id}: ${f} is not in ~sync (${local})`);
+    if (existsSync(local)) check(statSync(local).size <= 4 * 1024 * 1024, `walkthrough room ${r.id}: ${f} is ${Math.round(statSync(local).size / 1024)} KB, budget 4096 KB`);
+  }
+}
+
+// 7. No em dash in any built page.
 const pages = walk(dist).filter((f) => f.endsWith('.html'));
 check(pages.length >= navItems.length + 1, `only ${pages.length} html pages built`);
 for (const f of pages) check(!read(f).includes('—'), `${posix(relative(dist, f))} contains an em dash`);
@@ -173,4 +205,4 @@ if (failures.length) {
   console.error(`check-dist: ${checks} checks, ${failures.length} failed`);
   process.exit(1);
 }
-console.log(`check-dist: ${checks} checks, 0 failed (${pages.length} pages, ${projects.filter((p) => !p.draft).length} projects, ${liveModels.length} models, ${rules} redirect rules; ${syncNote})`);
+console.log(`check-dist: ${checks} checks, 0 failed (${pages.length} pages, ${projects.filter((p) => !p.draft).length} projects, ${liveModels.length} models, ${rooms.length} walkthrough rooms, ${rules} redirect rules; ${syncNote})`);

@@ -1,0 +1,490 @@
+{
+ "source": "lidar_shore-house46.blend",
+ "coordinates": "glTF: metres, Y up; exported from Blender Z-up as (x, z, -y)",
+ "base": "/static/img/models/world/",
+ "layers": [
+  {
+   "id": "scans",
+   "label": "LiDAR scans",
+   "rooms": [
+    {
+     "id": "backyard",
+     "title": "Backyard",
+     "group": "outside",
+     "files": [
+      "backyard.glb"
+     ],
+     "bbox_min": [
+      3.423,
+      -1.918,
+      8.907
+     ],
+     "bbox_max": [
+      24.769,
+      3.67,
+      58.048
+     ],
+     "center": [
+      14.096,
+      0.876,
+      33.477
+     ],
+     "spawn": [
+      14.096,
+      -0.318,
+      33.477
+     ]
+    },
+    {
+     "id": "deck",
+     "title": "Deck",
+     "group": "outside",
+     "files": [
+      "deck.glb"
+     ],
+     "bbox_min": [
+      4.203,
+      -0.702,
+      -0.458
+     ],
+     "bbox_max": [
+      24.045,
+      5.068,
+      13.182
+     ],
+     "center": [
+      14.124,
+      2.183,
+      6.362
+     ],
+     "spawn": [
+      14.124,
+      0.898,
+      6.362
+     ]
+    },
+    {
+     "id": "driveway",
+     "title": "Driveway and west side",
+     "group": "outside",
+     "files": [
+      "driveway.glb"
+     ],
+     "bbox_min": [
+      6.022,
+      -0.644,
+      -8.456
+     ],
+     "bbox_max": [
+      14.806,
+      6.483,
+      13.556
+     ],
+     "center": [
+      10.414,
+      2.919,
+      2.55
+     ],
+     "spawn": [
+      10.414,
+      0.956,
+      2.55
+     ]
+    },
+    {
+     "id": "east-side",
+     "title": "East side",
+     "group": "outside",
+     "files": [
+      "east-side-mesh-0-005.glb",
+      "east-side-mesh-1.glb"
+     ],
+     "bbox_min": [
+      16.362,
+      -0.631,
+      -15.375
+     ],
+     "bbox_max": [
+      25.09,
+      5.948,
+      6.054
+     ],
+     "center": [
+      20.726,
+      2.659,
+      -4.661
+     ],
+     "spawn": [
+      20.726,
+      0.969,
+      -4.661
+     ]
+    },
+    {
+     "id": "front-of-the-house",
+     "title": "Front of the house",
+     "group": "outside",
+     "files": [
+      "front-of-the-house.glb"
+     ],
+     "bbox_min": [
+      6.895,
+      -0.1,
+      -19.326
+     ],
+     "bbox_max": [
+      23.313,
+      6.358,
+      -3.875
+     ],
+     "center": [
+      15.104,
+      3.129,
+      -11.6
+     ],
+     "spawn": [
+      15.104,
+      1.5,
+      -11.6
+     ]
+    },
+    {
+     "id": "street",
+     "title": "Street",
+     "group": "outside",
+     "files": [
+      "street.glb"
+     ],
+     "bbox_min": [
+      2.822,
+      -0.245,
+      -29.724
+     ],
+     "bbox_max": [
+      26.722,
+      4.611,
+      -11.958
+     ],
+     "center": [
+      14.772,
+      2.183,
+      -20.841
+     ],
+     "spawn": [
+      14.772,
+      1.355,
+      -20.841
+     ]
+    },
+    {
+     "id": "downstairs-bathroom",
+     "title": "Downstairs bathroom",
+     "group": "downstairs",
+     "files": [
+      "downstairs-bathroom.glb"
+     ],
+     "bbox_min": [
+      14.798,
+      0.372,
+      -5.877
+     ],
+     "bbox_max": [
+      17.351,
+      2.833,
+      1.169
+     ],
+     "center": [
+      16.074,
+      1.602,
+      -2.354
+     ],
+     "spawn": [
+      16.074,
+      1.972,
+      -2.354
+     ]
+    },
+    {
+     "id": "front-hall",
+     "title": "Front hall",
+     "group": "downstairs",
+     "files": [
+      "front-hall.glb"
+     ],
+     "bbox_min": [
+      13.612,
+      0.26,
+      -6.633
+     ],
+     "bbox_max": [
+      20.026,
+      2.8,
+      -0.5
+     ],
+     "center": [
+      16.819,
+      1.53,
+      -3.567
+     ],
+     "spawn": [
+      16.819,
+      1.86,
+      -3.567
+     ]
+    },
+    {
+     "id": "kitchen",
+     "title": "Kitchen",
+     "group": "downstairs",
+     "files": [
+      "kitchen.glb"
+     ],
+     "bbox_min": [
+      10.829,
+      0.267,
+      -2.546
+     ],
+     "bbox_max": [
+      16.073,
+      2.805,
+      0.833
+     ],
+     "center": [
+      13.451,
+      1.536,
+      -0.856
+     ],
+     "spawn": [
+      13.451,
+      1.867,
+      -0.856
+     ]
+    },
+    {
+     "id": "living-room",
+     "title": "Living room",
+     "group": "downstairs",
+     "files": [
+      "living-room.glb"
+     ],
+     "bbox_min": [
+      10.908,
+      0.263,
+      -7.814
+     ],
+     "bbox_max": [
+      15.26,
+      2.834,
+      -2.379
+     ],
+     "center": [
+      13.084,
+      1.549,
+      -5.097
+     ],
+     "spawn": [
+      13.084,
+      1.863,
+      -5.097
+     ]
+    },
+    {
+     "id": "northeast-bedroom",
+     "title": "Northeast bedroom",
+     "group": "downstairs",
+     "files": [
+      "northeast-bedroom.glb"
+     ],
+     "bbox_min": [
+      15.945,
+      0.388,
+      -6.486
+     ],
+     "bbox_max": [
+      20.888,
+      2.935,
+      -2.05
+     ],
+     "center": [
+      18.417,
+      1.661,
+      -4.268
+     ],
+     "spawn": [
+      18.417,
+      1.988,
+      -4.268
+     ]
+    },
+    {
+     "id": "southeast-bedroom",
+     "title": "Southeast bedroom",
+     "group": "downstairs",
+     "files": [
+      "southeast-bedroom.glb"
+     ],
+     "bbox_min": [
+      16.179,
+      0.254,
+      -2.687
+     ],
+     "bbox_max": [
+      21.249,
+      2.77,
+      0.733
+     ],
+     "center": [
+      18.714,
+      1.512,
+      -0.977
+     ],
+     "spawn": [
+      18.714,
+      1.854,
+      -0.977
+     ]
+    },
+    {
+     "id": "stairs",
+     "title": "Stairs",
+     "group": "downstairs",
+     "files": [
+      "stairs.glb"
+     ],
+     "bbox_min": [
+      15.04,
+      0.329,
+      -7.899
+     ],
+     "bbox_max": [
+      17.75,
+      4.006,
+      -2.199
+     ],
+     "center": [
+      16.395,
+      2.167,
+      -5.049
+     ],
+     "spawn": [
+      16.395,
+      1.929,
+      -5.049
+     ]
+    },
+    {
+     "id": "sunroom",
+     "title": "Sunroom",
+     "group": "downstairs",
+     "files": [
+      "sunroom.glb"
+     ],
+     "bbox_min": [
+      10.554,
+      -0.051,
+      0.711
+     ],
+     "bbox_max": [
+      16.394,
+      2.86,
+      6.582
+     ],
+     "center": [
+      13.474,
+      1.405,
+      3.646
+     ],
+     "spawn": [
+      13.474,
+      1.549,
+      3.646
+     ]
+    },
+    {
+     "id": "east-bedroom",
+     "title": "East bedroom",
+     "group": "upstairs",
+     "files": [
+      "east-bedroom.glb"
+     ],
+     "bbox_min": [
+      16.638,
+      3.194,
+      -4.372
+     ],
+     "bbox_max": [
+      21.094,
+      5.638,
+      1.206
+     ],
+     "center": [
+      18.866,
+      4.416,
+      -1.583
+     ],
+     "spawn": [
+      18.866,
+      4.794,
+      -1.583
+     ]
+    },
+    {
+     "id": "upstairs-hall-and-bath",
+     "title": "Upstairs hall and bath",
+     "group": "upstairs",
+     "files": [
+      "upstairs-hall-and-bath.glb"
+     ],
+     "bbox_min": [
+      14.821,
+      0.703,
+      -5.391
+     ],
+     "bbox_max": [
+      17.27,
+      5.576,
+      1.333
+     ],
+     "center": [
+      16.045,
+      3.139,
+      -2.029
+     ],
+     "spawn": [
+      16.045,
+      2.303,
+      -2.029
+     ]
+    },
+    {
+     "id": "west-bedroom",
+     "title": "West bedroom",
+     "group": "upstairs",
+     "files": [
+      "west-bedroom.glb"
+     ],
+     "bbox_min": [
+      10.499,
+      2.867,
+      -4.109
+     ],
+     "bbox_max": [
+      15.063,
+      5.624,
+      1.049
+     ],
+     "center": [
+      12.781,
+      4.245,
+      -1.53
+     ],
+     "spawn": [
+      12.781,
+      4.467,
+      -1.53
+     ]
+    }
+   ]
+  }
+ ]
+}
