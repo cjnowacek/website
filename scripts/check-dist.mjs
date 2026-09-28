@@ -111,6 +111,10 @@ for (const f of ['.htaccess', 'includes/contact_handler.php', 'rss.xml', 'sitema
 }
 const rules = (read(join(dist, '.htaccess')).match(/^\s*(RewriteRule|Redirect)\b/gm) || []).length;
 check(rules >= 10, `.htaccess has ${rules} redirect rules, expected at least 10 (the legacy-URL 301s)`);
+// The room models are served only to pages on this site (a referer check, a
+// speed bump against pasted URLs and hotlinks, not a lock; see LEDGER.md).
+const ht = read(join(dist, '.htaccess'));
+check(ht.includes('HTTP_REFERER') && /RewriteCond %\{REQUEST_URI\} .*models.*glb/.test(ht), '.htaccess has no referer check on /static/img/models/*.glb');
 check(read(page('/contact')).includes('/includes/contact_handler.php'), '/contact does not post to /includes/contact_handler.php');
 const pdfs = new Set();
 for (const f of walk(join(root, 'src/pages')).filter((f) => f.endsWith('.astro'))) {

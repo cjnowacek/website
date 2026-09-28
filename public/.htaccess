@@ -29,6 +29,15 @@ RewriteBase /
 # Never rewrite the live PHP endpoints (POST targets — a redirect would drop the body).
 RewriteRule ^(includes|play)(/|$) - [L]
 
+# The room models (.glb under /static/img/models/) are served only to pages on
+# this site: not to a pasted URL, a hotlink or a scraper. The Referer header
+# can be faked or stripped, so this is a speed bump, not a lock (the user
+# chose it 2026-09-27 knowing that; LEDGER.md has the research). A visitor
+# whose browser sends no Referer at all gets a 403 on the models only.
+RewriteCond %{REQUEST_URI} ^/static/img/models/.*\.glb$ [NC]
+RewriteCond %{HTTP_REFERER} !^https?://(www\.)?cjnowacek\.com/ [NC]
+RewriteRule ^ - [F]
+
 # Old Whisper slugs and singular/plural typo permutations -> canonical
 # (renamed Jul 2026 to match the game's actual title; canonical is
 # whispers-from-the-star, which must NOT match here or it would loop)
