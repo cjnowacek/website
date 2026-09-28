@@ -119,14 +119,14 @@ const models = (existsSync(modelsDir) ? walk(modelsDir) : [])
   .map((f) => {
     const fm = read(f).split(/^---\s*$/m)[1] || '';
     const field = (k) => (fm.match(new RegExp(`^${k}:\s*(.+)$`, 'm')) || [])[1]?.trim().replace(/^['"]|['"]$/g, '') || '';
-    return { id: posix(relative(modelsDir, f)).replace(/\.mdx$/, ''), file: field('file'), poster: field('poster'), draft: /^true/.test(field('draft')) };
+    return { id: posix(relative(modelsDir, f)).replace(/\.mdx$/, ''), file: field('file'), poster: field('poster'), draft: /^true\b/.test(field('draft')) };
   });
 const liveModels = models.filter((m) => !m.draft);
 check(liveModels.length > 0, 'no live model entries under src/content/models');
 check(navItems.some(([href]) => href === '/shore-house'), 'nav does not link /shore-house');
 check(existsSync(page('/shore-house')), '/shore-house/ was not built');
 const shore = read(page('/shore-house'));
-const viewers = (shore.match(/<model-viewer/g) || []).length;
+const viewers = (shore.match(/<model-viewer\b/g) || []).length;
 check(viewers === liveModels.length, `/shore-house/ has ${viewers} <model-viewer> elements for ${liveModels.length} live entries`);
 for (const m of models) {
   if (m.draft) {
