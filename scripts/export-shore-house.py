@@ -48,10 +48,11 @@ EYE_HEIGHT = 1.6
 
 args = sys.argv[sys.argv.index('--') + 1:] if '--' in sys.argv else []
 if not args:
-    print('usage: ... --python scripts/export-shore-house.py -- <glb-out-dir> [--no-glb]')
+    print('usage: ... --python scripts/export-shore-house.py -- <glb-out-dir> [--no-glb] [--only <room-id>]')
     sys.exit(2)
 out_dir = args[0]
 write_glb = '--no-glb' not in args
+only = args[args.index('--only') + 1] if '--only' in args else None  # export just this room's GLB; the JSON is always complete
 repo = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 json_path = os.path.join(repo, 'src', 'data', 'shore-house-explore.json')
 os.makedirs(out_dir, exist_ok=True)
@@ -75,6 +76,29 @@ def walk(col):
         walk(c)
 walk(bpy.data.collections['Lidar'])
 
+# An image whose file went missing exports as no texture at all (the sunroom,
+# 2026-09-27: its jpg sat in textures/ under a different relative path). Find
+# such a file by name anywhere under the .blend's folder and point at it, in
+# memory only: the .blend is never saved here.
+blend_dir = os.path.dirname(bpy.data.filepath)
+for img in bpy.data.images:
+    if img.packed_file or img.source != 'FILE':
+        continue
+    if os.path.exists(bpy.path.abspath(img.filepath)):
+        continue
+    wanted = os.path.basename(img.filepath) or img.name
+    found = None
+    for dirpath, _, files in os.walk(blend_dir):
+        if wanted in files:
+            found = os.path.join(dirpath, wanted)
+            break
+    if found:
+        img.filepath = found
+        img.reload()
+        print(f"image {img.name}: relinked to {os.path.relpath(found, blend_dir)}")
+    else:
+        print(f"image {img.name}: MISSING ({img.filepath}), exports untextured")
+
 missing = sorted(set(ROOMS) - set(objects))
 unmapped = sorted(set(objects) - set(ROOMS))
 if missing or unmapped:
@@ -85,7 +109,7 @@ rooms = {}
 for name, o in objects.items():
     rid, title, group = ROOMS[name]
     file_slug = rid if list(v[0] for v in ROOMS.values()).count(rid) == 1 else f"{rid}-{slug(name)}"
-    if write_glb:
+    if write_glb and (only is None or only == rid):
         for other in bpy.data.objects:  # not the operator: it is a no-op in background mode, and the exports accumulated
             other.select_set(False)
         o.hide_set(False)
