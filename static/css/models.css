@@ -76,3 +76,16 @@ model-viewer img[slot="poster"] {
         grid-template-columns: 1fr;
     }
 }
+
+/* The way into the walkthrough (/other/shore-house/explore/), above the room grid. */
+.explore-cta {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 12px 18px;
+    margin: 0 0 30px;
+}
+
+.explore-cta span {
+    color: var(--text-secondary);
+}

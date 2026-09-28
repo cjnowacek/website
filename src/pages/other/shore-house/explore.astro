@@ -1,0 +1,81 @@
+---
+// src/pages/other/shore-house/explore.astro: the Shore House walkthrough.
+// A full-screen, noclip-style fly-through of every room at once. Its own
+// document (no site Layout); the room list comes from the generated
+// src/data/shore-house-explore.json, so a new layer is new data, not code.
+import layout from '../../../data/shore-house-explore.json';
+import '../../../../static/css/explore.css';
+
+const groupLabels = { outside: 'Outside', downstairs: 'Downstairs', upstairs: 'Upstairs' };
+const groupOrder = ['outside', 'downstairs', 'upstairs'];
+
+// Per layer: the groups that have rooms, in the fixed order, then any unknown
+// group after them (labelled by its id) so a new group in the data still shows.
+const layers = layout.layers.map((layer) => {
+  const present = [...new Set(layer.rooms.map((r) => r.group))];
+  const groups = [
+    ...groupOrder.filter((g) => present.includes(g)),
+    ...present.filter((g) => !groupOrder.includes(g)),
+  ].map((g) => ({
+    id: g,
+    label: groupLabels[g] ?? g,
+    rooms: layer.rooms.filter((r) => r.group === g),
+  }));
+  return { id: layer.id, label: layer.label, groups };
+});
+---
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <meta name="author" content="CJ Nowacek" />
+    <meta name="description" content="Fly through the LiDAR scans of a New Jersey shore house, room by room." />
+    <title>Shore House walkthrough - CJ Nowacek</title>
+    <link rel="icon" href="/favicon.ico" sizes="32x32" />
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+  </head>
+  <body>
+    <canvas id="view" tabindex="0" aria-label="Shore House walkthrough"></canvas>
+    <aside id="panel" class="panel">
+      <div class="panel-head">
+        <a class="panel-back" href="/other/shore-house/">Shore House</a>
+        <button id="panel-toggle" type="button" aria-expanded="true" aria-controls="panel-body">Rooms</button>
+      </div>
+      <div id="panel-body" class="panel-body">
+        {layers.map((layer) => (
+          <>
+            <h2>{layer.label}</h2>
+            {layer.groups.map((group) => (
+              <>
+                <h3>{group.label}</h3>
+                <ul class="rooms">
+                  {group.rooms.map((room) => (
+                    <li>
+                      <button type="button" class="room-go" data-room={room.id}>{room.title}</button>
+                      <input type="checkbox" class="room-show" data-room={room.id} checked aria-label={`Show ${room.title}`} />
+                    </li>
+                  ))}
+                </ul>
+              </>
+            ))}
+          </>
+        ))}
+        <div class="panel-actions">
+          <button type="button" id="show-all">All</button>
+          <button type="button" id="show-none">None</button>
+          <button type="button" id="copy-link">Copy link</button>
+        </div>
+        <p class="panel-help">Drag to look. W A S D to move, Q and E for down and up, Shift to go fast, scroll to change speed. On a phone, drag to look and use the stick to move.</p>
+      </div>
+    </aside>
+    <div id="stick" class="stick" aria-hidden="true"><div class="stick-knob"></div></div>
+    <div id="status" class="status" role="status" aria-live="polite"></div>
+    <script type="application/json" id="explore-data" set:html={JSON.stringify(layout)}></script>
+    <script>
+      import { start } from '../../../scripts/explore.js';
+      start();
+    </script>
+  </body>
+</html>

@@ -1,0 +1,215 @@
+/* static/css/explore.css - Shore House walkthrough (src/pages/other/shore-house/explore.astro) */
+@import 'variables.css';
+
+html, body {
+    margin: 0;
+    height: 100%;
+    overflow: hidden;
+    background: var(--bg-color);
+    color: var(--text-color);
+    font-family: system-ui, -apple-system, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+}
+
+#view {
+    position: fixed;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    display: block;
+    touch-action: none;
+    outline: none;
+    cursor: grab;
+}
+
+#view:active {
+    cursor: grabbing;
+}
+
+.panel {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 300px;
+    max-height: 100vh;
+    overflow: auto;
+    background: rgba(45, 46, 51, 0.94);
+    border-radius: 0 0 10px 0;
+    box-shadow: 0 2px 12px rgba(0, 0, 0, .35);
+}
+
+.panel-head {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 12px 14px;
+    border-bottom: 1px solid rgba(255, 255, 255, .08);
+}
+
+.panel-back {
+    color: var(--header-color);
+    font-family: Cambria, Georgia, serif;
+    font-size: 1.2em;
+    text-decoration: none;
+}
+
+#panel-toggle {
+    display: none;
+}
+
+.panel-body {
+    padding: 8px 14px 14px;
+}
+
+.panel h2 {
+    font: 700 1.05em Cambria, Georgia, serif;
+    color: var(--header-color);
+    margin: 10px 0 4px;
+}
+
+.panel h3 {
+    font: 700 0.95em Cambria, Georgia, serif;
+    color: var(--text-secondary);
+    margin: 10px 0 4px;
+    text-transform: uppercase;
+    letter-spacing: .04em;
+}
+
+.rooms {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+}
+
+.rooms li {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.room-go {
+    flex: 1;
+    text-align: left;
+    background: none;
+    border: 0;
+    color: var(--text-color);
+    font: inherit;
+    padding: 5px 6px;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+.room-go:hover {
+    background: rgba(255, 255, 255, .08);
+}
+
+.room-show {
+    accent-color: var(--header-color);
+}
+
+.panel-actions {
+    display: flex;
+    gap: 8px;
+    margin: 12px 0 8px;
+}
+
+.panel-actions button {
+    background: var(--form-bg);
+    color: var(--text-color);
+    border: 1px solid rgba(255, 255, 255, .12);
+    border-radius: 6px;
+    padding: 6px 10px;
+    font: inherit;
+    cursor: pointer;
+}
+
+#copy-link {
+    margin-left: auto;
+    background: var(--header-color);
+    color: var(--on-accent);
+    border-color: transparent;
+    font-weight: 600;
+}
+
+.panel-help {
+    color: var(--text-secondary);
+    font-size: 13px;
+    line-height: 1.45;
+    margin: 6px 0 0;
+}
+
+.status {
+    position: fixed;
+    left: 50%;
+    bottom: 18px;
+    transform: translateX(-50%);
+    background: rgba(45, 46, 51, .92);
+    color: var(--text-color);
+    padding: 8px 14px;
+    border-radius: 999px;
+    font-size: 14px;
+    pointer-events: none;
+}
+
+.status:empty {
+    display: none;
+}
+
+.stick {
+    display: none;
+    position: fixed;
+    left: 24px;
+    bottom: 24px;
+    width: 120px;
+    height: 120px;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, .08);
+    border: 2px solid rgba(255, 255, 255, .18);
+    touch-action: none;
+}
+
+.stick-knob {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    width: 48px;
+    height: 48px;
+    margin: -24px 0 0 -24px;
+    border-radius: 50%;
+    background: var(--header-color);
+    opacity: .85;
+}
+
+@media (pointer: coarse) {
+    .stick {
+        display: block;
+    }
+}
+
+@media (max-width: 720px) {
+    .panel {
+        width: min(300px, 86vw);
+    }
+
+    #panel-toggle {
+        display: inline-block;
+        background: var(--form-bg);
+        color: var(--text-color);
+        border: 1px solid rgba(255, 255, 255, .12);
+        border-radius: 6px;
+        padding: 6px 10px;
+        font: inherit;
+    }
+
+    .panel-body {
+        display: none;
+    }
+
+    .panel--open .panel-body {
+        display: block;
+    }
+}
+
+:focus-visible {
+    outline: 3px solid var(--header-color);
+    outline-offset: 2px;
+}
