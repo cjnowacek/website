@@ -10,7 +10,7 @@ const projects = defineCollection({
   schema: z.object({
     title: z.string(),
     company: z.string().default(''),
-    category: z.enum(['techart', 'devops']),
+    category: z.enum(['techart', 'devops', 'other']), // other: side projects, listed on /other (Other Projects)
     featured: z.boolean().default(false),
     order: z.number().default(999),
     image: z.string().nullable().default(null),
@@ -53,7 +53,8 @@ const devlog = defineCollection({
 });
 
 // Shore House: one .mdx per LiDAR room scan under src/content/models/, all
-// shown on /other/ (src/pages/other.astro, the Other Projects page). `file` and `poster` are
+// shown on the Shore House project page (/other/shore-house/, the `shore-house`
+// project's MDX body via src/components/ModelGrid.astro). `file` and `poster` are
 // URLs under /static/img/models/, which is Dropbox ~sync/models via the image
 // sync, not git; scripts/build-models.mjs makes the .glb display versions.
 // The body is an optional caption under the viewer.
