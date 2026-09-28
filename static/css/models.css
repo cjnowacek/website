@@ -21,6 +21,7 @@
 model-viewer {
     display: block;
     width: 100%;
+    height: auto; /* model-viewer's own :host style sets height: 150px, which would beat aspect-ratio once the library loads */
     aspect-ratio: 4 / 3;
     position: relative;
     background: var(--nav-bg);
