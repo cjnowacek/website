@@ -3,8 +3,9 @@ export const siteName = 'CJ Nowacek';
 export const siteTitle = 'CJ Nowacek';
 
 // Navigation: [href, label]
+// No Home item: the site title in the header links home, and seven items
+// wrapped to two rows on a tablet.
 export const navItems = [
-  ['/', 'Home'],
   ['/techart', 'Tech Art'],
   ['/devops', 'Pipeline'],
   ['/devlog', 'Dev Log'],

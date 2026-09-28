@@ -88,6 +88,13 @@ found, what is known and accepted)
   session scratch (recreate from the ledger notes under Next, or
   screenshot the viewer).
 
+- 2026-09-27 `nav-trim` (main session, on main): the user's look at
+  /other/ ("is this too cluttered"): Home dropped from the nav (the header
+  title links home; seven items wrapped on a tablet), the rule and the
+  two-line intro on /other/ replaced by one line. check-dist now asserts
+  the home page directly since it is no longer a nav route. Gate: 18 pages,
+  233/0, 3/0.
+
 ## Running
 
 - `card-srcset` (branch `subagent/card-srcset`, worktree

@@ -50,8 +50,10 @@ if (!existsSync(dist)) {
   process.exit(1);
 }
 
-// 1. Nav routes and the 404 page.
+// 1. The home page, the nav routes and the 404 page (Home is not a nav item:
+//    the header title links there).
 const { navItems } = await import(pathToFileURL(join(root, 'src/config.js')).href);
+check(existsSync(page('/')), 'the home page was not built');
 for (const [href] of navItems) check(existsSync(page(href)), `nav route ${href} has no built page`);
 check(existsSync(join(dist, '404.html')), '404.html was not built');
 
