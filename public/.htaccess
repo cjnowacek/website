@@ -17,6 +17,12 @@ ErrorDocument 404 /404.html
   </FilesMatch>
 </IfModule>
 
+# The Shore House scans (/static/img/models/*.glb) must go out as glTF binary,
+# not application/octet-stream, so the viewer and caches treat them as models.
+<IfModule mod_mime.c>
+  AddType model/gltf-binary .glb
+</IfModule>
+
 RewriteEngine On
 RewriteBase /
 

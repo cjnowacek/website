@@ -7,11 +7,18 @@
 //             ~sync/models, which the image sync copies into static/img/models
 // Each <Room name>.glb becomes <room-name>.glb: materials made unlit (the scan
 // texture already carries its lighting; lit, the PBR defaults render it dark),
-// then gltf-transform optimize with meshopt compression and the texture
-// re-encoded as 1024 px webp. Measured on Kitchen.glb: 5.54 MB to 343 KB, the
-// same 44.7k triangles. Order matters: unlit after optimize would decode the
-// meshopt buffer and double the file. A file whose output is newer than its
-// source is skipped, so re-running after adding one scan converts only that.
+// then gltf-transform optimize: weld, simplify (ratio 0.75), quantize
+// (KHR_mesh_quantization, which every viewer reads without a decoder) and the
+// texture re-encoded as 1024 px webp. Not meshopt or draco: neither decoder
+// ships in the @google/model-viewer bundle (meshopt is loaded from a URL the
+// site would have to host and set as meshoptDecoderLocation; without it the
+// load fails with "setMeshoptDecoder must be called", seen 2026-09-27), and
+// draco fetches its decoder from Google's CDN on the visitor's first click.
+// Quantized files are about twice the meshopt size and need nothing. Measured
+// on Kitchen.glb: 5.54 MB
+// to 0.70 MB (343 KB with meshopt), the same 44.7k triangles. A file whose
+// output is newer than its source is skipped, so re-running after adding one
+// scan converts only that.
 // The .glb.json sidecars beside the scans are art-catalog metadata and ignored.
 import { execFileSync } from 'node:child_process';
 import { existsSync, mkdirSync, readdirSync, statSync, unlinkSync } from 'node:fs';
@@ -25,7 +32,10 @@ if (!src || !out || !existsSync(src)) {
 }
 mkdirSync(out, { recursive: true });
 const slug = (name) => name.replace(/\.glb$/i, '').toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');
-const cli = (...args) => execFileSync('npx', ['--yes', '@gltf-transform/cli@4', ...args], { stdio: 'pipe', shell: process.platform === 'win32' });
+// npx is a .cmd on Windows, which node will only spawn through a shell; the
+// room names have spaces, so every argument is quoted for it.
+const q = (a) => (process.platform === 'win32' ? `"${a.replace(/"/g, '""')}"` : a);
+const cli = (...args) => execFileSync('npx', ['--yes', '@gltf-transform/cli@4', ...args].map(q), { stdio: 'pipe', shell: process.platform === 'win32' });
 const mb = (n) => (n / 1024 / 1024).toFixed(2);
 
 let done = 0, skipped = 0;
@@ -36,7 +46,7 @@ for (const name of readdirSync(src).filter((f) => f.toLowerCase().endsWith('.glb
   const tmp = join(tmpdir(), `unlit-${process.pid}-${slug(name)}.glb`);
   try {
     cli('unlit', from, tmp);
-    cli('optimize', tmp, to, '--compress', 'meshopt', '--texture-compress', 'webp', '--texture-size', '1024');
+    cli('optimize', tmp, to, '--compress', 'quantize', '--texture-compress', 'webp', '--texture-size', '1024');
   } finally {
     if (existsSync(tmp)) unlinkSync(tmp);
   }
