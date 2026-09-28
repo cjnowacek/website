@@ -79,19 +79,27 @@ found, what is known and accepted)
   images that item 3 under Next replaces; lands together with those assets
   after the user's look.
 - `models-section` (branch `subagent/models-section`, worktree
-  `.claude/worktrees/models-section`): the Shore House page. Gate commits by
-  the main session: 545a2d3 (schema `models` in `src/content.config.ts`,
-  `@google/model-viewer` 4.3.1 in `package.json`, `scripts/build-models.mjs`,
-  checks in `check-dist.mjs`; seen red: 72 checks, 4 failed) and 4d59e89
-  (quantize-only recipe, `.glb` MIME type in `public/.htaccess`). Delegated
-  to the implementer 2026-09-27 with the brief in the session scratch
-  (`brief-models-section.md`): nav item, 20 `.mdx` entries (19 live, the
-  "initial test" scan a draft), `src/lib/models.js`,
-  `src/components/ModelViewer.astro`, `src/pages/shore-house.astro`,
-  `static/css/models.css`. Assets are done and in place: `~sync/models/`
-  holds 20 `.glb` (0.2 to 1.1 MB, 15 MB total) and 20 posters (8 to 25 KB),
-  synced into `static/img/models/`; NOT yet rsynced to the host, so this
-  cannot land before that rsync (or the page 404s on every room).
+  `.claude/worktrees/models-section`): the Shore House scans. Gate commits
+  by the main session: 545a2d3 (schema `models`, `@google/model-viewer`
+  4.3.1, `scripts/build-models.mjs`, checks; red 72/4), 4d59e89
+  (quantize-only recipe, `.glb` MIME type), b4e5ddd (fix: two word-boundary
+  escapes in the new checks had arrived as 0x08 bytes, found by the
+  implementer), 56564aa and d3c4726 (retargets after the user's look, see
+  below; red 228/42). The implementer's first pass, 2d645da, built a
+  standalone `/shore-house/` page and passed the gate (227/0) once b4e5ddd
+  landed. The user's look 2026-09-27 at http://127.0.0.1:4325/shore-house/
+  (dev server from the worktree, `static/img/models` junctioned in): "this
+  is good" but no tab of its own; then "an other projects tab that has the
+  grid style cards like in the home page for stuff not pertaining to
+  techart or pipeline stuff". Now delegated (second brief, sent by
+  SendMessage to the same agent): category `other`, listing page
+  `/other/` (nav "Other"), project `shore-house.mdx` whose body holds the
+  viewer grid (`ModelGrid.astro`), detail route `/other/shore-house/`,
+  `ProjectDetail` category map, `shore-house.astro` deleted. Assets in
+  `~sync`: 20 `.glb` (0.2 to 1.1 MB, 15 MB) and 20 posters in `models/`, the
+  card image `project-cards/shore-house-webp-1200x900.webp` (74 KB) and
+  its 800x600 (40 KB); all synced into `static/img/`; NOT yet on the host,
+  so this cannot land before that rsync.
 
 ## Next, in order
 
@@ -118,7 +126,7 @@ sitting 2026-09-27 (this one), where the plan was executed. The user
 (2026-09-26): "not for smite or other projects. completely different tab I
 want to show off" and "like wip models of my shorehouse project". So a
 standalone section with its own nav item, and the models are the iPhone
-LiDAR scans in `C:\Dropbox-devdlender-shore-house\scans\` (20 rooms,
+LiDAR scans in `C:/Dropbox/2-dev/3d/blender-shore-house/scans/` (20 rooms,
 110 MB). Downloads cannot be prevented in a browser viewer; the user was
 told, and what ships is display versions only.
 
@@ -188,3 +196,10 @@ Pipeline, all done and reproducible:
   the site hosts and configures (`meshoptDecoderLocation`); without it the
   load fails silently in the page (an `error` event). Check the extensions a
   file requires against what the viewer ships before choosing a compressor.
+- 2026-09-27: in a shared worktree a bare `git commit` takes whatever the
+  subagent has staged (its `git mv` rode into a gate commit and had to be
+  rewritten). The main session commits gate files with explicit paths:
+  `git -C <worktree> commit -m ... -- <files>`.
+- 2026-09-27: the Bash tool halves backslashes, so a `\b` typed into a
+  Python heredoc reaches Python as a backspace escape. Write regex escapes
+  through the Write/Edit tools, or spell the backslash as `chr(92)`.
