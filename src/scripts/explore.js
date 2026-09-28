@@ -324,8 +324,14 @@ function init() {
     'ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight',
     'ShiftLeft', 'ShiftRight',
   ]);
+  // Only something you type into keeps the keys. A focused button, checkbox
+  // or link does nothing with a letter, and focus lands on those every time
+  // the panel is used; ignoring them there made W A S D stop after a click.
   function ignoredTarget(t) {
-    return t instanceof Element && !!t.closest('input, button, a, select, textarea');
+    if (!(t instanceof Element)) return false;
+    if (t.closest('textarea, select, [contenteditable]')) return true;
+    const input = t.closest('input');
+    return !!input && !['checkbox', 'radio', 'button', 'submit', 'range'].includes(input.type);
   }
   window.addEventListener('keydown', (e) => {
     if (e.ctrlKey || e.metaKey || e.altKey) return;
