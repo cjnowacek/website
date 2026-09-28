@@ -65,6 +65,29 @@ found, what is known and accepted)
   implementer (sonnet) reported honestly that it never saw the check red
   itself; that is the main session's proof, not its job.
 
+- 2026-09-27 `models-section` (landed b0da2e5, fast-forward of
+  `subagent/models-section`, 10 commits): the Other Projects tab
+  (`/other/`, nav "Other", a card grid like the home page) and the Shore
+  House project at `/other/shore-house/`: 19 iPhone LiDAR room scans as
+  click-to-load `<model-viewer>` rooms (`src/content/models/`, 20 entries,
+  one draft), `@google/model-viewer` 4.3.1 loaded on the first click only,
+  a third project category `other`, `scripts/build-models.mjs` (the
+  gltf-transform recipe), `.glb` MIME type in `.htaccess`. Gate at landing:
+  18 pages, check-dist 233/0, check-php 3/0. Assets rsynced to the host
+  from WSL (Git Bash has no rsync and no `siteground` alias; WSL has both):
+  `static/img/models/` (40 files, 15 MB) and the two `shore-house-webp-*`
+  card images. Review found the diff as briefed; the implementer found a
+  real defect in the main session's check (two escapes arrived as 0x08
+  bytes, fixed in 41c2a4c); the main session's look found the card-shrink
+  bug fixed in 02009e8. The user looked twice: first at a standalone tab
+  ("this is good" but no tab of its own), then asked for the card grid.
+  Known and accepted: the viewer chunk is 1,070 KB (290 KB gzipped) where
+  the package's prebuilt module is 464 KB (140 KB); captions are empty;
+  the "initial test" scan is a draft; the posters were rendered once by
+  model-viewer in headless Chrome and the tool for that lives only in the
+  session scratch (recreate from the ledger notes under Next, or
+  screenshot the viewer).
+
 ## Running
 
 - `card-srcset` (branch `subagent/card-srcset`, worktree
@@ -78,41 +101,6 @@ found, what is known and accepted)
   a1564fd. Gate on it is green except `check-media` on the five Dropbox card
   images that item 3 under Next replaces; lands together with those assets
   after the user's look.
-- `models-section` (branch `subagent/models-section`, worktree
-  `.claude/worktrees/models-section`): Other Projects tab with the Shore
-  House scans. REVIEWED 2026-09-27 AND APPROVED, waiting for the user's look
-  and the asset rsync. Branch (rebased on main 84a4b5d, 10 commits): gate
-  commits 664ac4c (schema `models`, `@google/model-viewer` 4.3.1,
-  `scripts/build-models.mjs`, checks; red 72/4), 35640b5 (quantize recipe,
-  `.glb` MIME type), 41c2a4c (two word-boundary escapes had arrived as 0x08
-  bytes; found by the implementer), c0927f0 and 0a18845 (retargets after the
-  user's looks: category `other`, listing `/other/`, scans on
-  `/other/shore-house/`; red 228/42); implementer commits fba1007 (first
-  pass, standalone page), be3100f and 5411a1a (the card-grid version:
-  `other.astro`, `other/[...slug].astro`, `shore-house.mdx`,
-  `ModelGrid.astro`, `ProjectDetail` category map, `ModelViewer` caption,
-  20 model entries, `models.css`); main-session fix 02009e8 (`height: auto`
-  on `model-viewer`: once the library loaded, its `:host` height of 150px
-  beat `aspect-ratio` and every card shrank; seen in the headless look,
-  heights 227/227 before and after now). Review: scope exact, no gate file
-  touched, diff read, gate under the main session 18 pages, check-dist
-  233/0, check-php 3/0. Looks: headless Chrome on the built preview at 1300
-  and 400 px (page loads one 1.3 KB script and no library; the first click
-  fetches the 1 MB chunk, 290 KB gzipped, then the room), Chrome
-  screenshots of `/other/` and `/other/shore-house/`. Preview for the user:
-  http://127.0.0.1:4326/other/ (`astro preview` from the worktree, which has
-  `static/img/models` junctioned from the main checkout and the card image
-  copied into `static/img/project-cards/`, both gitignored).
-  TO LAND: (1) rsync `static/img/models/` and
-  `static/img/project-cards/shore-house-webp-{1200x900,800x600}.webp` to the
-  host, (2) fast-forward main, push (deploys), (3) remove the
-  `static/img/models` junction and the `node_modules` junction in the
-  worktree on their own before `git worktree remove`.
-  Follow-up worth a task: the bundled viewer chunk is 1,070 KB (290 KB
-  gzipped) against 464 KB (140 KB) for the package's own
-  `dist/model-viewer-module.min.js`; importing that file instead would halve
-  the first click.
-
 ## Next, in order
 
 Sitting 2026-09-26, "optimization". Measured first (Chrome, live site):
@@ -163,9 +151,11 @@ Pipeline, all done and reproducible:
   headed Chrome tab could not be used: the MCP tab reports
   `document.hidden`, and model-viewer never renders a hidden tab.
 
-5. `models-section` (implementer): running, see above.
-6. Image rsync (main session): `~sync/models/` to the host, with the item 3
-   assets or on its own. Then `models-section` lands.
+5. `models-section`: landed 2026-09-27 (see Landed), assets rsynced.
+6. `viewer-chunk` (main session or implementer, small): import
+   `@google/model-viewer/dist/model-viewer-module.min.js` instead of the
+   package entry so the first click fetches 140 KB gzipped, not 290 KB.
+   Check: the bundled chunk under 600 KB.
 7. Later, if wanted: room captions (the `.mdx` bodies), the blockmesh stage
    and the clean house exported from save 46 as further entries, a
    hand-rolled three.js viewer with skeleton and clip switching for
