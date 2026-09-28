@@ -20,3 +20,4 @@ dist/
 
 # Subagent worktrees (gated subagent workflow; see LEDGER.md)
 .claude/worktrees/
+.claude/agent-memory-local/

@@ -3,8 +3,8 @@
 
 Reads the hook JSON on stdin. Exits 2 (blocks the call) when:
   - Edit / Write / NotebookEdit targets a gate file, or
-  - Bash runs a git command that leaves the branch, pushes, stashes, merges,
-    or touches worktrees, or kills processes by name.
+  - Bash or PowerShell runs a git command that leaves the branch, pushes,
+    stashes, merges, or touches worktrees, or kills processes by name.
 
 The gate is `.claude/gate` at the root of the checkout the file lives in
 (main checkout or worktree: the nearest ancestor with a `.git`); a worktree
@@ -13,7 +13,9 @@ file is still covered. One pattern
 per line, `#` comments; a pattern matches a path or anything under it, and
 `*` also crosses `/`. With no `.claude/gate`, a default set covers the usual
 test, check-script and build-definition locations. `.claude/`, `CLAUDE.md`
-and `LEDGER.md` (or its older name `STATE.md`) are always gate.
+and `LEDGER.md` (or its older name `STATE.md`) are always gate, except the
+subagent's own notes under `.claude/agent-memory/` and
+`.claude/agent-memory-local/` (the `memory:` field in its definition).
 
 Only python3 is needed. Exit 0 = allow.
 """
@@ -24,6 +26,7 @@ import re
 import sys
 
 ALWAYS = [".claude", "CLAUDE.md", "LEDGER.md", "STATE.md"]
+MEMORY = [".claude/agent-memory", ".claude/agent-memory-local"]
 
 DEFAULT_GATE = [
     "test", "tests", "spec", "specs", "__tests__", "e2e", "cypress",
@@ -127,6 +130,8 @@ def main():
             return
         # Windows relpath uses backslashes; the patterns are written with `/`.
         rel = os.path.relpath(path, root).replace(os.sep, "/")
+        if matches(rel, MEMORY):
+            return  # the subagent's own notes, never the gate
         hit = matches(rel, ALWAYS)
         pats, source = load_gate(root)
         hit = hit or matches(rel, pats)
@@ -136,7 +141,7 @@ def main():
                  "do not work around it: say which check and why in your report.")
         return
 
-    if tool == "Bash":
+    if tool in ("Bash", "PowerShell"):
         cmd = inp.get("command") or ""
         m = GIT_FORBIDDEN.search(cmd)
         if m:
