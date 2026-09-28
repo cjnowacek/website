@@ -108,6 +108,31 @@ found, what is known and accepted)
   a1564fd. Gate on it is green except `check-media` on the five Dropbox card
   images that item 3 under Next replaces; lands together with those assets
   after the user's look.
+- `explore` (branch `subagent/explore`, worktree `.claude/worktrees/explore`,
+  junctions: `node_modules`, `static/img/models`): the noclip-style
+  walkthrough at `/other/shore-house/explore/`. The user (2026-09-27): "is
+  there a way to set it up like https://noclip.website/" then "yes. I am
+  eventually going to make a cleaned up model. full version". Gate commits by
+  the main session: d5ca29d (`three` 0.183.2 as a direct dependency, pinned
+  to model-viewer's; `scripts/export-shore-house.py`;
+  `src/data/shore-house-explore.json`; checks; red 274/38), 1bf7575 and
+  e818970 (export fixes: manual deselect, missing-image relink, `--only`).
+  Why the Blender file and not the raw scans: the scans in the .blend were
+  cropped, rotated and placed in edit mode, so the placement is in the mesh
+  data and no object transform reproduces it with the original files; the
+  export takes the placed meshes themselves (17 rooms, two east-side scans
+  merged), world space, glTF Y-up. Assets: `~sync/models/world/*.glb`
+  (18 files, 14 MB, 0.3 to 2.3 MB each), synced into `static/img/models/world`,
+  NOT yet on the host. Layout verified by three Blender renders (top-down,
+  three-quarter, inside the front hall): rooms adjoin, street north (-z in
+  glTF), backyard south. Delegated to the implementer on opus (controls are
+  judgement) with `brief-explore.md` in the session scratch: full-screen
+  three.js page, fly camera, room list with teleport, per-room show/hide,
+  camera in the URL hash, copy link, touch stick, data structured in layers
+  for the rebuild to come. Also in that brief: the CTA on the project page
+  and the northeast/southeast bedroom entries moved to the downstairs group
+  (they are on the ground floor).
+
 ## Next, in order
 
 Sitting 2026-09-26, "optimization". Measured first (Chrome, live site):
