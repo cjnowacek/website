@@ -79,27 +79,39 @@ found, what is known and accepted)
   images that item 3 under Next replaces; lands together with those assets
   after the user's look.
 - `models-section` (branch `subagent/models-section`, worktree
-  `.claude/worktrees/models-section`): the Shore House scans. Gate commits
-  by the main session: 545a2d3 (schema `models`, `@google/model-viewer`
-  4.3.1, `scripts/build-models.mjs`, checks; red 72/4), 4d59e89
-  (quantize-only recipe, `.glb` MIME type), b4e5ddd (fix: two word-boundary
-  escapes in the new checks had arrived as 0x08 bytes, found by the
-  implementer), 56564aa and d3c4726 (retargets after the user's look, see
-  below; red 228/42). The implementer's first pass, 2d645da, built a
-  standalone `/shore-house/` page and passed the gate (227/0) once b4e5ddd
-  landed. The user's look 2026-09-27 at http://127.0.0.1:4325/shore-house/
-  (dev server from the worktree, `static/img/models` junctioned in): "this
-  is good" but no tab of its own; then "an other projects tab that has the
-  grid style cards like in the home page for stuff not pertaining to
-  techart or pipeline stuff". Now delegated (second brief, sent by
-  SendMessage to the same agent): category `other`, listing page
-  `/other/` (nav "Other"), project `shore-house.mdx` whose body holds the
-  viewer grid (`ModelGrid.astro`), detail route `/other/shore-house/`,
-  `ProjectDetail` category map, `shore-house.astro` deleted. Assets in
-  `~sync`: 20 `.glb` (0.2 to 1.1 MB, 15 MB) and 20 posters in `models/`, the
-  card image `project-cards/shore-house-webp-1200x900.webp` (74 KB) and
-  its 800x600 (40 KB); all synced into `static/img/`; NOT yet on the host,
-  so this cannot land before that rsync.
+  `.claude/worktrees/models-section`): Other Projects tab with the Shore
+  House scans. REVIEWED 2026-09-27 AND APPROVED, waiting for the user's look
+  and the asset rsync. Branch (rebased on main 84a4b5d, 10 commits): gate
+  commits 664ac4c (schema `models`, `@google/model-viewer` 4.3.1,
+  `scripts/build-models.mjs`, checks; red 72/4), 35640b5 (quantize recipe,
+  `.glb` MIME type), 41c2a4c (two word-boundary escapes had arrived as 0x08
+  bytes; found by the implementer), c0927f0 and 0a18845 (retargets after the
+  user's looks: category `other`, listing `/other/`, scans on
+  `/other/shore-house/`; red 228/42); implementer commits fba1007 (first
+  pass, standalone page), be3100f and 5411a1a (the card-grid version:
+  `other.astro`, `other/[...slug].astro`, `shore-house.mdx`,
+  `ModelGrid.astro`, `ProjectDetail` category map, `ModelViewer` caption,
+  20 model entries, `models.css`); main-session fix 02009e8 (`height: auto`
+  on `model-viewer`: once the library loaded, its `:host` height of 150px
+  beat `aspect-ratio` and every card shrank; seen in the headless look,
+  heights 227/227 before and after now). Review: scope exact, no gate file
+  touched, diff read, gate under the main session 18 pages, check-dist
+  233/0, check-php 3/0. Looks: headless Chrome on the built preview at 1300
+  and 400 px (page loads one 1.3 KB script and no library; the first click
+  fetches the 1 MB chunk, 290 KB gzipped, then the room), Chrome
+  screenshots of `/other/` and `/other/shore-house/`. Preview for the user:
+  http://127.0.0.1:4326/other/ (`astro preview` from the worktree, which has
+  `static/img/models` junctioned from the main checkout and the card image
+  copied into `static/img/project-cards/`, both gitignored).
+  TO LAND: (1) rsync `static/img/models/` and
+  `static/img/project-cards/shore-house-webp-{1200x900,800x600}.webp` to the
+  host, (2) fast-forward main, push (deploys), (3) remove the
+  `static/img/models` junction and the `node_modules` junction in the
+  worktree on their own before `git worktree remove`.
+  Follow-up worth a task: the bundled viewer chunk is 1,070 KB (290 KB
+  gzipped) against 464 KB (140 KB) for the package's own
+  `dist/model-viewer-module.min.js`; importing that file instead would halve
+  the first click.
 
 ## Next, in order
 
