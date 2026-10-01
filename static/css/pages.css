@@ -47,30 +47,249 @@
 }
 
 /* DEV LOG */
+.devlog-intro {
+    max-width: 800px;
+    margin: 0 auto 2.5rem;
+    text-align: left;
+    color: var(--text-secondary);
+}
+
+.devlog-intro p {
+    margin: 0 0 0.5rem;
+}
+
 .devlog-list {
     max-width: 800px;
     margin: 0 auto;
     text-align: left;
 }
 
-.devlog-entry {
-    padding: 0 0 2rem;
+/* Month heading: small orange label with a rule running out to the right */
+.devlog-month {
     margin: 0 0 2rem;
-    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
 }
 
-.devlog-entry h3 {
-    margin: 0 0 0.25rem;
-    font-size: 1.4em;
+.devlog-month-label {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    margin: 0 0 0.5rem;
+    color: var(--accent-muted);
+    font-size: 13px;
+    font-weight: 600;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
 }
 
-.devlog-entry h3 a {
+.devlog-month-label::after {
+    content: "";
+    flex: 1;
+    height: 1px;
+    background: rgba(255, 255, 255, 0.12);
+}
+
+/* One post: date column, then title, summary and tags. Divider below each. */
+.devlog-entry {
+    position: relative;
+    display: grid;
+    grid-template-columns: 3.5rem 1fr;
+    gap: 1.25rem;
+    padding: 1.25rem 1rem;
+    margin: 0 -1rem;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 6px;
+    transition: background 0.2s ease;
+}
+
+.devlog-entry:last-child {
+    border-bottom: none;
+}
+
+.devlog-entry:hover {
+    background: rgba(255, 255, 255, 0.04);
+}
+
+.devlog-date {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding-top: 0.2rem;
+    line-height: 1.1;
+}
+
+.devlog-date-day {
+    font-family: Cambria, Georgia, serif;
+    font-size: 1.9em;
+    font-weight: bold;
+    color: var(--text-color);
+    font-variant-numeric: tabular-nums;
+}
+
+.devlog-date-mon {
+    color: var(--text-secondary);
+    font-size: 12px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+}
+
+.devlog-entry h4 {
+    margin: 0 0 0.35rem;
+    font-size: 1.2em;
+    line-height: 1.35;
+}
+
+/* The title link covers the whole entry, so the row is one click target */
+.devlog-entry h4 a {
     color: var(--text-color);
     text-decoration: none;
 }
 
-.devlog-entry h3 a:hover {
+.devlog-entry h4 a::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+}
+
+.devlog-entry:hover h4 a,
+.devlog-entry h4 a:focus-visible {
     color: var(--header-color);
+}
+
+.devlog-entry p {
+    margin: 0;
+    color: var(--text-secondary);
+    font-size: 15px;
+    line-height: 1.6;
+}
+
+.devlog-tags {
+    margin-top: 0.6rem;
+    gap: 0.35rem;
+}
+
+.devlog-tags .tech-tag {
+    padding: 0.1rem 0.6rem;
+    font-size: 0.72rem;
+}
+
+/* Page links */
+.devlog-pages {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 1rem;
+    margin: 1rem 0 3rem;
+    padding-top: 1.5rem;
+    border-top: 1px solid rgba(255, 255, 255, 0.12);
+    font-size: 15px;
+}
+
+.devlog-pages a {
+    color: var(--text-color);
+    text-decoration: none;
+}
+
+.devlog-pages-step {
+    padding: 0.4em 0.9em;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    border-radius: 6px;
+    white-space: nowrap;
+}
+
+a.devlog-pages-step:hover {
+    border-color: var(--header-color);
+    color: var(--header-color);
+}
+
+.devlog-pages-step.is-disabled {
+    opacity: 0.35;
+}
+
+.devlog-pages-numbers {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 0.25rem;
+}
+
+.devlog-pages-numbers > * {
+    min-width: 2.2em;
+    padding: 0.3em 0.4em;
+    text-align: center;
+    border-radius: 6px;
+}
+
+.devlog-pages-numbers a:hover {
+    background: rgba(255, 255, 255, 0.06);
+    color: var(--header-color);
+}
+
+.devlog-pages-numbers [aria-current="page"] {
+    background: var(--header-color);
+    color: var(--on-accent);
+    font-weight: bold;
+}
+
+/* Previous / next post at the foot of a post page */
+.devlog-neighbors {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1rem;
+    max-width: var(--text-content-max-width);
+    margin: 3rem auto 1rem;
+    text-align: left;
+}
+
+.devlog-neighbors a {
+    display: block;
+    padding: 1rem 1.25rem;
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    border-radius: 8px;
+    color: var(--text-color);
+    text-decoration: none;
+    transition: border-color 0.2s ease;
+}
+
+.devlog-neighbors a:hover {
+    border-color: var(--header-color);
+}
+
+.devlog-neighbors .is-newer {
+    grid-column: 2;
+    text-align: right;
+}
+
+.devlog-neighbors small {
+    display: block;
+    margin-bottom: 0.25rem;
+    color: var(--text-secondary);
+    font-size: 12px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+}
+
+.devlog-post-tags {
+    justify-content: center;
+    margin: 0 0 2rem;
+}
+
+@media (max-width: 600px) {
+    .devlog-entry {
+        grid-template-columns: 2.75rem 1fr;
+        gap: 0.9rem;
+    }
+    .devlog-date-day {
+        font-size: 1.5em;
+    }
+    .devlog-neighbors {
+        grid-template-columns: 1fr;
+    }
+    .devlog-neighbors .is-newer {
+        grid-column: 1;
+    }
+    .devlog-pages-numbers {
+        display: none;
+    }
 }
 
 .devlog-meta {
@@ -79,15 +298,8 @@
     margin: 0 0 0.75rem;
 }
 
-.devlog-meta a,
-.devlog-more,
-.devlog-rss {
+.devlog-meta a {
     color: var(--header-color);
-}
-
-.devlog-rss {
-    margin-left: 0.5rem;
-    font-size: 0.9em;
 }
 
 .devlog-body p {
@@ -98,6 +310,71 @@
     background: var(--form-bg);
     padding: 0.1em 0.4em;
     border-radius: 4px;
+}
+
+.devlog-body pre {
+    padding: 15px;
+    border-radius: 8px;
+    margin: 1.25rem 0;
+    font-size: 14px;
+    line-height: 1.5;
+    overflow-x: auto;
+}
+
+.devlog-body pre code {
+    background: none;
+    padding: 0;
+}
+
+/* Row of labelled chips, each with its own colour via --chip */
+.format-chips {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    list-style: none;
+    padding: 0;
+    margin: 1.25rem 0;
+}
+
+.format-chips li {
+    padding: 4px 12px;
+    border: 2px solid var(--chip);
+    border-radius: 4px;
+    color: var(--chip);
+    font-family: 'Courier New', monospace;
+    font-size: 14px;
+    font-weight: bold;
+}
+
+.devlog-table {
+    margin: 1.5rem 0;
+    overflow-x: auto;
+}
+
+.devlog-table figcaption {
+    color: var(--text-secondary);
+    font-size: 14px;
+    margin-bottom: 0.5rem;
+}
+
+.devlog-table table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 14px;
+    font-variant-numeric: tabular-nums;
+}
+
+.devlog-table th,
+.devlog-table td {
+    padding: 6px 10px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    white-space: nowrap;
+}
+
+.devlog-table th {
+    color: var(--text-secondary);
+    font-weight: normal;
+    border-bottom-color: rgba(255, 255, 255, 0.3);
 }
 
 .project-posts ul {

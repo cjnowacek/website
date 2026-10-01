@@ -1,0 +1,82 @@
+---
+title: "The crash was the only QA check"
+date: 2026-10-01
+summary: A QA tool kept crashing on certain SketchUp imports. The crash turned out to be the only thing flagging broken deliverables, so fixing it alone would have removed the one check.
+tags: [3ds Max, MaxScript, QA]
+project: ml3ds
+---
+
+Our QA tool imports every format of a client deliverable into one 3ds Max scene, side by
+side, so a reviewer can check that the OBJ, 3DS, STP, DWG, DXF and SKP all match the master
+model.
+
+<ul class="format-chips" aria-label="Formats imported, in order">
+  <li style="--chip: #cccccc">MAX</li>
+  <li style="--chip: #e0b040">OBJ</li>
+  <li style="--chip: #5fb8e8">3DS</li>
+  <li style="--chip: #9a7ee0">STP</li>
+  <li style="--chip: #6cc070">DWG</li>
+  <li style="--chip: #e07fb0">DXF</li>
+  <li style="--chip: #FF7A40">SKP</li>
+</ul>
+
+Each format gets its own wire colour in the viewport. The SKP comes in last.
+
+For a few weeks it had been dying on some files: this error right after the SKP import, and
+then the window ignored every click until it was closed. The reviewer's workaround was to
+reopen it, hide everything but the master and render the previews anyway.
+
+```text
+-- Unknown property: "name" in $selection
+-- Line number: 317
+```
+
+The error line didn't match the source. Our build stamps a 3-line header onto every encrypted
+script, so line 317 in the error was line 314 in the source:
+
+```text
+select newObj
+$.name = ($.name + "_SKP")
+```
+
+`$` is a single object only when exactly one object is selected. These SKPs came in as a
+group, a group head plus its contents, so `$` was the whole selection set, and that has no
+`.name`.
+
+The easy fix was to handle groups and move on. But why were some SKPs groups? I imported all
+twelve folders from the report and compared each SKP with its OBJ.
+
+<figure class="devlog-table">
+<figcaption>SKP against OBJ, twelve deliverables</figcaption>
+
+| Model | Stray splines | SKP tris | OBJ tris | Short | Tool |
+| :---- | ----: | ----: | ----: | ----: | :---- |
+| A | 1 | 61,828 | 61,938 | 110 | crashed |
+| B | 1 | 60,106 | 60,216 | 110 | crashed |
+| C | 8 | 11,923 | 11,931 | 8 | crashed |
+| D | 2 | 10,492 | 10,500 | 8 | crashed |
+| E | 1 | 63,994 | 63,995 | 1 | crashed |
+| F | 148 | 49,027 | 49,139 | 112 | crashed |
+| G | 0 | 1,614 | 1,614 | 0 | passed |
+| H | 0 | 1,222 | 1,222 | 0 | passed |
+| I | 0 | 8,544 | 8,544 | 0 | passed |
+| J | 0 | 64,218 | 64,221 | 3 | passed |
+| K | 0 | 9,958 | 9,958 | 0 | passed |
+| L | 0 | 10,104 | 10,104 | 0 | passed |
+
+</figure>
+
+Every failing SKP was a mesh plus stray splines and came up 1 to 112 triangles short of its
+OBJ. Every working SKP was a single mesh. The splines were faces that hadn't survived the
+SketchUp export and came through as bare edges, which is why the importer grouped them.
+
+So the crash had been the only thing catching bad deliverables, and the workaround passed
+them through unseen. Fixing only the crash would have quietly removed the one check.
+
+The fix handles any number of imported objects. Anything that doesn't come in as exactly one
+mesh is now reported by what's actually in it, "2 loose edges" or "3 meshes", with possible
+causes listed rather than one diagnosis. The worst case I measured was a set of 0.007-inch
+pinholes, so the reviewer decides whether a re-export is worth it.
+
+Before you fix a crash, ask what the crash was protecting you from. Sometimes the bug is the
+only test you had.

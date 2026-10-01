@@ -44,7 +44,7 @@ const devlog = defineCollection({
   schema: z.object({
     title: z.string(),
     date: z.coerce.date(),
-    summary: z.string(), // one or two sentences: the listing, the RSS entry, and the social card
+    summary: z.string(), // one or two sentences: the listing and the social card
     tags: z.array(z.string()).default([]),
     project: z.string().optional(),
     image: z.string().optional(), // optional lead image / social preview

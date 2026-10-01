@@ -1,36 +1,16 @@
 ---
-// src/pages/devlog.astro — the dev log index. Posts live one per file in
-// src/content/devlog/; each gets its own page at /devlog/<slug>/ and the RSS
-// feed at /rss.xml. Workflow: draft privately, publish here (scrubbed, one
-// thing per post), promote to a project page when a topic earns it.
+// src/pages/devlog.astro — the dev log index, page 1. Posts live one per file in
+// src/content/devlog/; each gets its own page at /devlog/<slug>/. Older posts
+// page at /devlog/page/<n>/. Workflow: draft
+// privately, publish here (scrubbed, one thing per post), promote to a project
+// page when a topic earns it.
 import Layout from '../layouts/Layout.astro';
-import { getPosts, formatDate } from '../lib/devlog.js';
+import DevlogList from '../components/DevlogList.astro';
+import { getPosts, PER_PAGE } from '../lib/devlog.js';
 
 const posts = await getPosts();
+const pageCount = Math.max(1, Math.ceil(posts.length / PER_PAGE));
 ---
 <Layout title="Dev Log" description="Working notes from CJ Nowacek's pipeline bench: what is being built, what broke, and how it was fixed.">
-  <div class="container" style="max-width: 1300px;">
-    <h2>Dev Log</h2>
-    <div class="about-text" style="max-width: 800px; margin: 0 auto 40px auto; text-align: left;">
-      <p>
-        Working notes from the pipeline bench: what I'm building, what broke, and how I thought
-        through it. Short entries, posted as the work happens.
-        <a href="/rss.xml" class="devlog-rss">RSS feed</a>
-      </p>
-    </div>
-
-    <div class="devlog-list">
-      {posts.map((post) => (
-        <article class="devlog-entry">
-          <h3><a href={`/devlog/${post.id}/`}>{post.data.title}</a></h3>
-          <p class="devlog-meta">
-            <time datetime={post.data.date.toISOString().slice(0, 10)}>{formatDate(post.data.date)}</time>
-            {post.data.tags.length > 0 && <span> &middot; {post.data.tags.join(' / ')}</span>}
-          </p>
-          <p>{post.data.summary}</p>
-          <a href={`/devlog/${post.id}/`} class="devlog-more">Read the post</a>
-        </article>
-      ))}
-    </div>
-  </div>
+  <DevlogList posts={posts.slice(0, PER_PAGE)} page={1} pageCount={pageCount} />
 </Layout>

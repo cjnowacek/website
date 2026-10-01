@@ -1,0 +1,66 @@
+---
+// src/components/DevlogList.astro — one page of the dev log index: the intro,
+// up to PER_PAGE posts grouped under month headings, and the page links.
+// Used by src/pages/devlog.astro (page 1) and src/pages/devlog/page/[page].astro.
+import { pageHref } from '../lib/devlog.js';
+
+const { posts, page, pageCount } = Astro.props;
+const pages = Array.from({ length: pageCount }, (_, i) => i + 1);
+
+// Group consecutive posts by month (posts arrive newest first).
+const monthFmt = { year: 'numeric', month: 'long', timeZone: 'UTC' };
+const groups = [];
+for (const post of posts) {
+  const month = post.data.date.toLocaleDateString('en-US', monthFmt);
+  if (groups.at(-1)?.month !== month) groups.push({ month, posts: [] });
+  groups.at(-1).posts.push(post);
+}
+const day = (d) => d.toLocaleDateString('en-US', { day: 'numeric', timeZone: 'UTC' });
+const mon = (d) => d.toLocaleDateString('en-US', { month: 'short', timeZone: 'UTC' });
+---
+<div class="container" style="max-width: 1300px;">
+  <h2>Dev Log</h2>
+  <div class="devlog-intro">
+    <p>
+      Working notes from the pipeline bench: what I'm building, what broke, and how I thought
+      through it. Short entries, posted as the work happens.
+    </p>
+  </div>
+
+  <div class="devlog-list">
+    {groups.map((g) => (
+      <section class="devlog-month">
+        <h3 class="devlog-month-label">{g.month}</h3>
+        {g.posts.map((post) => (
+          <article class="devlog-entry">
+            <time class="devlog-date" datetime={post.data.date.toISOString().slice(0, 10)}>
+              <span class="devlog-date-day">{day(post.data.date)}</span>
+              <span class="devlog-date-mon">{mon(post.data.date)}</span>
+            </time>
+            <div class="devlog-entry-body">
+              <h4><a href={`/devlog/${post.id}/`}>{post.data.title}</a></h4>
+              <p>{post.data.summary}</p>
+              {post.data.tags.length > 0 && (
+                <ul class="tech-tags devlog-tags">
+                  {post.data.tags.map((t) => <li class="tech-tag">{t}</li>)}
+                </ul>
+              )}
+            </div>
+          </article>
+        ))}
+      </section>
+    ))}
+
+    {pageCount > 1 && (
+      <nav class="devlog-pages" aria-label="Dev log pages">
+        {page > 1 ? <a class="devlog-pages-step" href={pageHref(page - 1)} rel="prev">← Newer</a> : <span class="devlog-pages-step is-disabled">← Newer</span>}
+        <span class="devlog-pages-numbers">
+          {pages.map((n) => n === page
+            ? <span aria-current="page">{n}</span>
+            : <a href={pageHref(n)}>{n}</a>)}
+        </span>
+        {page < pageCount ? <a class="devlog-pages-step" href={pageHref(page + 1)} rel="next">Older →</a> : <span class="devlog-pages-step is-disabled">Older →</span>}
+      </nav>
+    )}
+  </div>
+</div>

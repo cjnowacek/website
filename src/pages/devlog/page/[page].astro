@@ -1,0 +1,24 @@
+---
+// src/pages/devlog/page/[page].astro — dev log index, pages 2 and up.
+// Page 1 is /devlog itself (src/pages/devlog.astro).
+import Layout from '../../../layouts/Layout.astro';
+import DevlogList from '../../../components/DevlogList.astro';
+import { getPosts, PER_PAGE } from '../../../lib/devlog.js';
+
+export async function getStaticPaths() {
+  const posts = await getPosts();
+  const pageCount = Math.ceil(posts.length / PER_PAGE);
+  return Array.from({ length: Math.max(0, pageCount - 1) }, (_, i) => {
+    const page = i + 2;
+    return {
+      params: { page: String(page) },
+      props: { posts: posts.slice((page - 1) * PER_PAGE, page * PER_PAGE), page, pageCount },
+    };
+  });
+}
+
+const { posts, page, pageCount } = Astro.props;
+---
+<Layout title={`Dev Log - Page ${page}`} description="Working notes from CJ Nowacek's pipeline bench: what is being built, what broke, and how it was fixed.">
+  <DevlogList posts={posts} page={page} pageCount={pageCount} />
+</Layout>
