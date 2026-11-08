@@ -6,7 +6,8 @@ import Breadcrumb from '../../components/Breadcrumb.astro';
 import { formatDate } from '../../lib/devlog.js';
 
 export async function getStaticPaths() {
-  const posts = await getCollection('devlog', (p) => !p.data.draft);
+  // Under `astro dev` a draft has a page too, so it can be previewed before it is published.
+  const posts = await getCollection('devlog', (p) => import.meta.env.DEV || !p.data.draft);
   return posts.map((post) => ({ params: { slug: post.id }, props: { post } }));
 }
 
