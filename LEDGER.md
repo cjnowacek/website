@@ -120,6 +120,26 @@ found, what is known and accepted)
   inside, the rebuild layer will replace that; the referer check is a
   speed bump, not a lock.
 
+- 2026-11-13 `private-hub` (main session, branch `private-hub`, fast-forward;
+  kept by the main session because a lock fails silently): the
+  password-protected hub at `/private/` with OmniTool as its first project
+  (the user: styled login page, a general hub, cropped shots that open the
+  full window, unlisted). Design and files: CLAUDE.md "The private hub".
+  Checks written first and seen red (`check-private.sh`, new section 7 of
+  `check-dist.mjs`). Gate at landing: 22 pages built (19 public + 3 moved
+  to `dist-private/pages`), check-dist 314/0, check-private 42/0, check-php
+  5/0. The OmniTool page was then rewritten against the user's own tool
+  docs (captions, the in-app updater that replaced the scheduled task,
+  build and release); share paths, the port, the repo and client names are
+  left out even behind the password. Screenshots (18 cropped + 18 full)
+  synced with `./deploy-private.sh`. The host's CLI PHP is 7.4: the gate is
+  written to that (no `never`/`mixed`, polyfilled `str_*`) and lints clean
+  there. Known and accepted: one shared password, no per-visitor accounts
+  or rate limit beyond a 1 s delay (the password must be long and random);
+  the screenshots show client names, server names and the user's login,
+  which is why they sit behind the password; `private-assets/` exists only
+  on this machine until the user copies it to Dropbox.
+
 
 ## Running
 
@@ -134,24 +154,6 @@ found, what is known and accepted)
   a1564fd. Gate on it is green except `check-media` on the five Dropbox card
   images that item 3 under Next replaces; lands together with those assets
   after the user's look.
-- `private-hub` (branch `private-hub`, main session, no worktree; kept by
-  the main session because a lock fails silently): the password-protected
-  hub at `/private/` with OmniTool as its first project (the user,
-  2026-11-13: styled login page, a general hub, cropped shots that open the
-  full window, unlisted). Design and files: CLAUDE.md "The private hub".
-  Gate on the branch: 22 pages built (19 public + 3 moved to
-  `dist-private/pages`), check-dist 314/0, check-private 42/0, check-php
-  5/0. NOT landed: waits for the user's look
-  (`scripts/preview-private.sh`, password `preview`) and their go-ahead to
-  touch the host. Landing order: `./deploy-private.sh` (18 + 18 screenshots
-  from `private-assets/img/omnitool`), `./deploy-private.sh --set-password`,
-  then merge and push. After the deploy, verify on the live site what the
-  gate cannot show locally: that `/private/omnitool/` without a cookie gets
-  the login form right after a logged-in fetch (SiteGround's dynamic cache
-  must not replay a private page), that `/private/img/...png` reaches PHP
-  (nginx must not 404 it first), and that the host's PHP runs the gate.
-  The screenshots show client names, server names and the user's login;
-  that is why they are only behind the password.
 ## Next, in order
 
 Sitting 2026-09-26, "optimization". Measured first (Chrome, live site):
