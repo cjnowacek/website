@@ -5,7 +5,10 @@ import Layout from './Layout.astro';
 import Breadcrumb from '../components/Breadcrumb.astro';
 import { getPostsForProject, formatDate } from '../lib/devlog.js';
 
-const { project } = Astro.props;
+// `hub`: this page is the private hub's landing page itself (/private/ with a
+// single private project), so there is nothing to go back to: the breadcrumb
+// stops at the title and the back link becomes Log out.
+const { project, hub = false } = Astro.props;
 const d = project.data;
 const categories = {
   techart: ['Technical Art', '/techart'],
@@ -35,7 +38,7 @@ const facts = [
     <Breadcrumb
       crumbs={[
         { label: 'Home', href: '/' },
-        { label: categoryLabel, href: categoryHref },
+        ...(hub ? [] : [{ label: categoryLabel, href: categoryHref }]),
         { label: d.title },
       ]}
     />
@@ -91,9 +94,13 @@ const facts = [
     )}
 
     <div style="display: flex; justify-content: flex-start; margin: 60px 0 40px 0; gap: 20px;">
-      <a href={categoryHref} class="project-link" style="background: var(--form-bg); color: var(--text-color);">
-        ← Back to {categoryLabel}
-      </a>
+      {hub ? (
+        <a href="/private/logout" class="project-link" style="background: var(--form-bg); color: var(--text-color);">Log out</a>
+      ) : (
+        <a href={categoryHref} class="project-link" style="background: var(--form-bg); color: var(--text-color);">
+          ← Back to {categoryLabel}
+        </a>
+      )}
     </div>
   </div>
 </Layout>

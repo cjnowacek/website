@@ -25,8 +25,9 @@
 //     nothing private is in dist/ (no dist/private, no private project's page
 //     or title in any text file, no /private/ URL in the sitemap); the build
 //     moved the private pages to dist-private/pages/ (the hub, the login
-//     template with its form and tokens, one page per `private: true` project,
-//     all noindex); the gate and its rewrite rule ship; and (where
+//     template with its form and tokens, and either the one `private: true`
+//     project as the hub page itself or, with several, a page each linked from
+//     the hub; all noindex); the gate and its rewrite rule ship; and (where
 //     private-assets/ exists) every /private/img/ file a page names is there;
 //   - no built page, public or private, contains an em dash (site copy rule in CLAUDE.md).
 // Exit 0 prints "check-dist: N checks, 0 failed"; exit 1 lists each failure.
@@ -231,9 +232,17 @@ const login = read(privPage('/login'));
 check(login.includes('action="/private/login"') && login.includes('type="password"'), 'the login template has no password form posting to /private/login');
 check(login.includes('%%LOGIN_ERROR%%') && login.includes('%%NEXT%%'), 'the login template lacks the %%LOGIN_ERROR%% / %%NEXT%% tokens the gate fills in');
 const hub = read(privPage('/'));
-for (const p of privateProjects) {
-  check(existsSync(privPage(`/${p.id}`)), `private project ${p.id} has no page at dist-private/pages/${p.id}/`);
-  check(hub.includes(`href="/private/${p.id}/"`), `the hub does not link to /private/${p.id}/`);
+check(hub.includes('href="/private/logout"'), 'the hub has no log out link');
+if (privateProjects.length === 1) {
+  // One private project: it IS the hub page (the user, 2026-11-13: no list with a single card).
+  const only = privateProjects[0];
+  check(new RegExp(`<h2[^>]*>${only.title.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}</h2>`).test(hub), `the hub is not the ${only.id} page (no <h2>${only.title}</h2>)`);
+  check(!existsSync(privPage(`/${only.id}`)), `dist-private/pages/${only.id}/ was built as well as the merged hub page`);
+} else {
+  for (const p of privateProjects) {
+    check(existsSync(privPage(`/${p.id}`)), `private project ${p.id} has no page at dist-private/pages/${p.id}/`);
+    check(hub.includes(`href="/private/${p.id}/"`), `the hub does not link to /private/${p.id}/`);
+  }
 }
 const privPages = existsSync(privDist) ? walk(privDist).filter((f) => f.endsWith('.html')) : [];
 const assets = join(root, 'private-assets');

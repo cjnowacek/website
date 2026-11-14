@@ -9,6 +9,9 @@ import { getPrivateProjects } from '../../lib/projects.js';
 
 export async function getStaticPaths() {
   const projects = await getPrivateProjects();
+  // A single private project is shown on /private/ itself (see index.astro),
+  // so it gets no page of its own.
+  if (projects.length === 1) return [];
   return projects.map((project) => ({
     params: { slug: project.id },
     props: { project },

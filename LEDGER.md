@@ -139,6 +139,13 @@ found, what is known and accepted)
   the screenshots show client names, server names and the user's login,
   which is why they sit behind the password; `private-assets/` exists only
   on this machine until the user copies it to Dropbox.
+  Same day, the user's look: "merge omnitool: pipeline into the main
+  private page". With one private project `/private/` is now that project's
+  page (no list, no `/private/omnitool/`); a second private project brings
+  the list back by itself. Both checks changed with it. Gate: 21 pages
+  built (19 public + 2 private), check-dist 313/0, check-private 42/0,
+  check-php 5/0. Also `deploy-private.sh --set-password` no longer exits
+  silently without a terminal (`--generate` for a no-prompt password).
 
 
 ## Running

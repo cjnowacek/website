@@ -46,11 +46,14 @@ post() { code="$(curl -s -b "$1" -c "$1" -D "$tmp/head" -o "$tmp/body" -w '%{htt
 has() { grep -q -- "$1" "$tmp/body"; }
 hdr() { grep -qi -- "$1" "$tmp/head"; }
 
-# The first private project page, and a phrase only its body has (its <h2>).
-proj="$(cd dist-private/pages && ls -d */ | grep -v '^login/$' | head -1)"
+# The page to attack, and a phrase only its body has (its <h2>): the first
+# private project page, or the hub itself when the one private project is
+# merged into it (then there is no project folder).
+proj="$(cd dist-private/pages && ls -d */ 2>/dev/null | grep -v '^login/$' | head -1)"
 proj="${proj%/}"
-marker="$(grep -o '<h2[^>]*>[^<]*</h2>' "dist-private/pages/$proj/index.html" | head -1 | sed 's/<[^>]*>//g')"
-ok '[ -n "$proj" ] && [ -n "$marker" ]' "no private project page with an <h2> found in dist-private/pages"
+target="/private/${proj:+$proj/}"
+marker="$(grep -o '<h2[^>]*>[^<]*</h2>' "dist-private/pages/${proj:+$proj/}index.html" | head -1 | sed 's/<[^>]*>//g')"
+ok '[ -n "$marker" ]' "no private page with an <h2> found in dist-private/pages"
 hash="$(cat "$data/password.hash")"
 
 anon="$tmp/anon.jar"; user="$tmp/user.jar"
@@ -58,12 +61,12 @@ anon="$tmp/anon.jar"; user="$tmp/user.jar"
 # 1. No session.
 get "$anon" /private/
 ok '[ "$code" = 200 ] && has "type=\"password\""' "GET /private/ without a session is not the login form (status $code)"
-ok '! has "/private/$proj/"' "the login form at /private/ shows the hub's links"
+ok '! has "$marker" && ! has "/private/logout"' "the login form at /private/ shows the hub"
 ok '! has "%%"' "the login form still shows a %% token"
 ok 'hdr "cache-control:.*no-store"' "the login form is cacheable"
-get "$anon" "/private/$proj/"
-ok 'has "type=\"password\"" && ! has "$marker"' "GET /private/$proj/ without a session leaks the page"
-ok 'has "value=\"/private/$proj/\""' "the login form does not remember /private/$proj/ as the page to return to"
+get "$anon" "$target"
+ok 'has "type=\"password\"" && ! has "$marker"' "GET $target without a session leaks the page"
+ok 'has "value=\"$target\""' "the login form does not remember $target as the page to return to"
 get "$anon" /private/img/fixture/one.png
 ok '[ "$code" = 403 ]' "an image without a session answers $code, expected 403"
 get "$anon" /private
@@ -72,25 +75,25 @@ ok '[ "$code" = 302 ] || [ "$code" = 303 ]' "/private without the slash answers 
 # 2. Wrong password, empty password.
 post "$anon" 'not the password'
 ok '[ "$code" = 200 ] && has "type=\"password\"" && has "Wrong password"' "a wrong password does not come back to the form with an error (status $code)"
-get "$anon" "/private/$proj/"
+get "$anon" "$target"
 ok '! has "$marker"' "a wrong password opened the page"
 post "$anon" ''
-get "$anon" "/private/$proj/"
+get "$anon" "$target"
 ok '! has "$marker"' "an empty password opened the page"
 
 # 3. Right password.
-post "$user" "$PASS" "/private/$proj/"
-ok '[ "$code" = 303 ] && hdr "location: /private/$proj/"' "the right password does not redirect to the page asked for (status $code)"
+post "$user" "$PASS" "$target"
+ok '[ "$code" = 303 ] && hdr "location: $target"' "the right password does not redirect to the page asked for (status $code)"
 ok 'hdr "set-cookie:.*httponly" && hdr "set-cookie:.*samesite=lax"' "the session cookie is not HttpOnly + SameSite=Lax"
 get "$user" /private/
-ok '[ "$code" = 200 ] && has "/private/$proj/"' "the hub is not served to a session (status $code)"
-get "$user" "/private/$proj/"
+ok '[ "$code" = 200 ] && has "/private/logout"' "the hub is not served to a session (status $code)"
+get "$user" "$target"
 ok '[ "$code" = 200 ] && has "$marker"' "the project page is not served to a session (status $code)"
 ok 'hdr "cache-control:.*private" && hdr "cache-control:.*no-store" && hdr "x-robots-tag:.*noindex"' "a private page lacks private/no-store or noindex headers"
 get "$user" /private/img/fixture/one.png
 ok '[ "$code" = 200 ] && hdr "content-type: image/png" && hdr "cache-control:.*private"' "the image is not served as a private image/png to a session (status $code)"
-get "$user" "/private/$proj"
-ok '[ "$code" = 302 ] || [ "$code" = 303 ]' "/private/$proj without the slash answers $code, expected a redirect"
+get "$user" "${target%/}"
+ok '[ "$code" = 302 ] || [ "$code" = 303 ]' "${target%/} without the slash answers $code, expected a redirect"
 post "$tmp/evil.jar" "$PASS" 'https://evil.example/'
 ok 'hdr "location: /private/"' "login follows an off-site next= (open redirect)"
 post "$tmp/evil.jar" "$PASS" '//evil.example/'
@@ -107,26 +110,26 @@ done
 get "$user" /private/login/index.html
 ok '! has "%%NEXT%%"' "the raw login template is served"
 get "$user" /includes/private_gate.php
-ok '[ "$code" != 200 ] || ! has "/private/$proj/"' "the gate serves private pages when called by its own URL"
+ok '[ "$code" != 200 ] || ! has "$marker"' "the gate serves private pages when called by its own URL"
 
 # 5. Logout.
 get "$user" /private/logout
-get "$user" "/private/$proj/"
+get "$user" "$target"
 ok '! has "$marker" && has "type=\"password\""' "the page is still served after logout"
 
 # 6. A changed password ends existing sessions; no password file locks everyone out.
 post "$user" "$PASS"
-get "$user" "/private/$proj/"
+get "$user" "$target"
 ok 'has "$marker"' "could not log in again after logout"
 php -r 'echo password_hash($argv[1], PASSWORD_DEFAULT);' 'a new password' > "$data/password.hash"
-get "$user" "/private/$proj/"
+get "$user" "$target"
 ok '! has "$marker"' "a session survived a password change"
 rm "$data/password.hash"
 post "$tmp/nohash.jar" "$PASS"
-get "$tmp/nohash.jar" "/private/$proj/"
+get "$tmp/nohash.jar" "$target"
 ok '! has "$marker"' "with no password file the page is served"
 post "$tmp/nohash.jar" ''
-get "$tmp/nohash.jar" "/private/$proj/"
+get "$tmp/nohash.jar" "$target"
 ok '! has "$marker"' "with no password file an empty password gets in"
 
 ok '! grep -qiE "(warning|notice|fatal|deprecated)" "$tmp/server.log"' "PHP logged warnings: $(grep -iE '(warning|notice|fatal|deprecated)' "$tmp/server.log" | head -3)"

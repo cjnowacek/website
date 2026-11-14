@@ -66,7 +66,7 @@ Listing pages pass an explicit ordered id array to `getProjectCards()` (`src/lib
 
 ### The private hub (`/private/`)
 
-Password-protected, unlisted, noindex: work that can be shown on request but not published (currently `omnitool`). A project with `private: true` in its frontmatter is built at `/private/<id>/` and nowhere public; `src/pages/private/` holds the hub page, the detail route and the login form template.
+Password-protected, unlisted, noindex: work that can be shown on request but not published (currently `omnitool`). A project with `private: true` in its frontmatter is built only into the hub, nowhere public. While there is a single private project it is the `/private/` page itself (the user, 2026-11-13: no list with one card); with two or more, `/private/` lists them and each gets `/private/<id>/`. `src/pages/private/` holds the hub page, the detail route and the login form template.
 
 - Nothing private is in the webroot. `npm run build` moves `dist/private/` to `dist-private/pages/`; the deploy syncs that to `private-data/pages/` beside `public_html`. `public/.htaccess` rewrites every `/private...` request to `public/includes/private_gate.php`, which checks the session and serves from `private-data/`. (A deny rule in `.htaccess` would not be a lock: SiteGround's nginx serves static files without asking Apache.)
 - Screenshots live in `private-assets/img/` (gitignored, NOT `static/img`, never in git) and are referenced as `/private/img/...`. `./deploy-private.sh` syncs them; `./deploy-private.sh --set-password` sets the one shared password (only its hash is stored, on the host; changing it logs everyone out). Keep a copy of `private-assets/` outside the repo.

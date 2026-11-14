@@ -1,12 +1,22 @@
 ---
 // src/pages/private/index.astro: the private hub's landing page, /private/.
-// Lists every `private: true` project. Moved out of dist/ after the build and
+// With one `private: true` project the page IS that project (no list with a
+// single card); with several it lists them, each at /private/<id>/. Moved out of dist/ after the build and
 // served only behind the password (see public/includes/private_gate.php).
+import { render } from 'astro:content';
 import Layout from '../../layouts/Layout.astro';
+import ProjectDetail from '../../layouts/ProjectDetail.astro';
 import { getPrivateProjects } from '../../lib/projects.js';
 
 const projects = await getPrivateProjects();
+const only = projects.length === 1 ? projects[0] : null;
+const Content = only ? (await render(only)).Content : null;
 ---
+{only ? (
+  <ProjectDetail project={only} hub>
+    <Content />
+  </ProjectDetail>
+) : (
 <Layout title="Private" description="Work shown on request." noindex>
   <div class="container" style="max-width: 1000px;">
     <h2>Private</h2>
@@ -33,6 +43,7 @@ const projects = await getPrivateProjects();
     <p class="private-logout"><a href="/private/logout">Log out</a></p>
   </div>
 </Layout>
+)}
 
 <style>
   .private-intro {
