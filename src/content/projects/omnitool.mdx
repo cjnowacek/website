@@ -10,13 +10,17 @@ pageTitle: "OmniTool: Pipeline App - Pipeline"
 description: >-
   A Python/PyQt application for automating 3ds Max scene prep and render-farm job submission.
   One codebase runs as a CLI, a desktop GUI, and natively inside Max, shipped as a self-updating,
-  EDR-whitelisted single-file executable to ~130 machines across two studios.
+  EDR-whitelisted single-file executable to ~130 machines across two studios. It health-checks and
+  cleans scenes, keeps a studio-wide record of every scene, and submits whole sets of client
+  material options to the farm in one batch.
 highlights:
   - One codebase runs as CLI, PyQt GUI, and natively inside 3ds Max
   - Single-file PyInstaller build tuned to pass studio EDR (SentinelOne)
-  - 'Self-updating: per-user task SHA-256 checks the share every 10 minutes'
+  - 'Self-updating: the app checks the studio share itself and installs a new build in one click'
+  - Scene health checks with one-click fixes, a JSON manifest per scene, and a studio-wide dashboard
+  - Renders every material option for a client as one farm batch
   - Headless install/uninstall with automatic Max startup-listener bootstrap
-tech_tags: [Python, PyQt, 3ds Max / pymxs, PyInstaller, PowerShell]
+tech_tags: [Python, PyQt, 3ds Max / pymxs, MaxScript, PyInstaller, SQLite]
 meta:
   role: Pipeline & Tools Developer
   platforms: Windows · 3ds Max 2022–2026
@@ -53,35 +57,35 @@ The desktop GUI, tab by tab. Each shot shows the main panel; click one to open t
   width={2142}
   height={1374}
   groups={[
-    { title: 'Prep', shots: [
-      { file: '01_prep_health.png', label: 'Health' },
-      { file: '02_prep_batch.png', label: 'Batch' },
-      { file: '03_prep_snapshots.png', label: 'Snapshots' },
-      { file: '04_prep_dag_view.png', label: 'DAG View' },
+    { title: 'Prep', note: 'Checks 3ds Max scenes and fixes what it can, one file, one folder, or a whole tree at a time.', shots: [
+      { file: '01_prep_health.png', label: 'Health.', caption: 'Generate only reads: it writes a JSON manifest next to the scene and updates the studio database. Clean fixes every issue it knows how to fix, saves, and checks again. The panel on the right has one row per check, each with its own Fix.' },
+      { file: '02_prep_batch.png', label: 'Batch.', caption: 'One operation across many files: purge mental ray leftovers, purge unused materials, reset file properties, or turn render output into approval JPGs with the right mask.' },
+      { file: '03_prep_snapshots.png', label: 'Snapshots.', caption: 'Every time a manifest is rewritten the old one is kept, so a scene can be read as it was at any earlier run.' },
+      { file: '04_prep_dag_view.png', label: 'DAG View.' },
     ] },
-    { title: 'Rendering: Visualizer', shots: [
-      { file: '05_viz_setup_classifier.png', label: 'Setup: Classifier' },
-      { file: '06_viz_setup_materials.png', label: 'Setup: Materials' },
-      { file: '07_viz_combinations.png', label: 'Combinations' },
-      { file: '08_viz_full_renders.png', label: 'Full Renders' },
-      { file: '09_viz_isolated_objects.png', label: 'Isolated Objects' },
-      { file: '10_viz_xref_swaps.png', label: 'XRef Swaps' },
-      { file: '11_viz_submitter.png', label: 'Submitter' },
-      { file: '12_viz_graph.png', label: 'Graph' },
+    { title: 'Rendering: Visualizer', note: 'Renders every material option for a client in one go. The options are set up once and the farm renders each as its own job: a layer per option masked to sit over a base plate, full hero rooms, isolated cut-outs and XRef swaps. The setup is saved beside the scene; the scene itself is never edited.', shots: [
+      { file: '05_viz_setup_classifier.png', label: 'Setup: Classifier.', caption: 'Each piece of the room is tagged Floor, Room and Type (for example a kitchen counter top).' },
+      { file: '06_viz_setup_materials.png', label: 'Setup: Materials.', caption: 'Donor objects carry the materials that are on offer.' },
+      { file: '07_viz_combinations.png', label: 'Combinations.', caption: 'A named setup: which XRefs are on and which materials each classification offers. The layered renders are calculated from it.' },
+      { file: '08_viz_full_renders.png', label: 'Full Renders.', caption: 'Hero rooms, with one material picked per classification.' },
+      { file: '09_viz_isolated_objects.png', label: 'Isolated Objects.', caption: 'Transparent cut-outs of one or a few XRefs.' },
+      { file: '10_viz_xref_swaps.png', label: 'XRef Swaps.', caption: 'The whole room with one XRef replaced.' },
+      { file: '11_viz_submitter.png', label: 'Submitter.', caption: 'Farm settings, output path and quality, a sanity check, then one Submit Batch. Any single part can be resent on its own.' },
+      { file: '12_viz_graph.png', label: 'Graph.' },
     ] },
-    { title: 'Rendering: Batch Render Manager', shots: [
-      { file: '13_batch_render_manager.png', label: 'Batch Render Manager' },
+    { title: 'Rendering: Batch Render Manager', note: 'A port of an older MaxScript tool: one farm job per camera, still, pano or dollhouse.', shots: [
+      { file: '13_batch_render_manager.png', label: 'Batch Render Manager.', caption: 'Tokens in the camera name set the render size, camera type, output folder and environment map; each camera keeps its own hidden-object list.' },
     ] },
-    { title: 'Dashboard', shots: [
-      { file: '14_dashboard_activity.png', label: 'Activity' },
+    { title: 'Dashboard', note: 'For looking at scenes, not changing them.', shots: [
+      { file: '14_dashboard_activity.png', label: 'Activity.', caption: 'Every scene that has a manifest, from the studio database, and everything the tool did to the selected one. Filters by action, user, outcome and date; scenes whose file changed after their manifest are flagged stale.' },
     ] },
     { title: 'System', shots: [
-      { file: '15_system_computer.png', label: 'Computer' },
-      { file: '16_system_errors.png', label: 'Errors' },
-      { file: '17_system_settings.png', label: 'Settings' },
+      { file: '15_system_computer.png', label: 'Computer.', caption: 'Machine setup, including installing or updating the render client.' },
+      { file: '16_system_errors.png', label: 'Errors.', caption: 'Failed batch runs, each with a folder of logs that can be opened and sent in one step.' },
+      { file: '17_system_settings.png', label: 'Settings.' },
     ] },
-    { title: 'Beta', shots: [
-      { file: '18_beta.png', label: 'Beta' },
+    { title: 'Beta', note: 'Where tools sit while they are still being tested.', shots: [
+      { file: '18_beta.png', label: 'Beta.' },
     ] },
   ]}
 />
@@ -103,14 +107,26 @@ The desktop GUI, tab by tab. Each shot shows the main panel; click one to open t
   </div>
   <div class="grid-item">
     <div class="project-info">
-      <h3>🔄 Silent Auto-Updater</h3>
-      <p class="project-description">A per-user scheduled task SHA-256-compares the share build every 10 minutes and prompts to update, with a per-build decline memory.</p>
+      <h3>🔄 In-App Updates</h3>
+      <p class="project-description">The app checks the studio share itself at startup, when its window is activated, and on Reload. A green Update button installs the new build and relaunches.</p>
     </div>
   </div>
   <div class="grid-item">
     <div class="project-info">
       <h3>🏢 Two-Studio Deploy</h3>
       <p class="project-description">Independent share roots, databases, and push cadences per studio, with each machine bound to its origin via a studio sentinel file.</p>
+    </div>
+  </div>
+  <div class="grid-item">
+    <div class="project-info">
+      <h3>🩺 Scene Health</h3>
+      <p class="project-description">Reads a scene into a JSON manifest, fixes the problems it knows (broken paths, plugin and mental ray leftovers, XRefs on the wrong version), and keeps every earlier manifest as a snapshot.</p>
+    </div>
+  </div>
+  <div class="grid-item">
+    <div class="project-info">
+      <h3>🎨 Material Options as One Batch</h3>
+      <p class="project-description">A room's finish options are set up once; the farm renders a layer per option, a base plate, hero rooms and cut-outs, each as its own job.</p>
     </div>
   </div>
 </div>
@@ -164,23 +180,35 @@ endpoint-security stack:
 
 </Expandable>
 
-<Expandable title="Install & Auto-Update Flow">
+<Expandable title="Install & Update Flow">
 
-The shippable artifact is a flat four-file bundle that mirrors 1:1 to a studio share. `install.bat`
-copies the exe to the user's desktop, drops a shortcut, headlessly installs the Max startup listener
-via `omnitool.exe --install-listener`, writes a studio sentinel, and registers a per-user
-**OmniTool Updater** scheduled task. `uninstall.bat` reverses every step in pure batch, with no
-dependency on the exe.
+The exe lives in a `dist\` folder on each studio's share and users only ever run `install.bat`,
+which copies it to a folder on the desktop, drops a shortcut, installs the Max startup listener,
+and writes a studio sentinel naming the share the machine follows. `uninstall.bat` reverses every
+step in pure batch, with no dependency on the exe. The app refuses to start straight off the share:
+a running share copy locks the file and blocks the next push, while a copy only takes a read handle.
 
-The updater task then runs every 10 minutes and:
+There is no background updater. The app checks the share itself:
 
-1. Reads the studio sentinel to find the pinned share root.
-2. SHA-256-compares the share's `omnitool.exe` against the local copy; exits silently if they match.
-3. Honors a per-hash "decline" file, so saying No to one build doesn't nag, but a fresh push invalidates the decline automatically.
-4. Otherwise prompts with a 60-second auto-yes timer, then shells `install.bat` in unattended mode and relaunches.
+1. **When:** two seconds after startup on a background thread, when the window is activated (at most once a minute, no prompt), and whenever the user clicks Reload.
+2. **How:** the file date of the share's exe against the installed one (the installer keeps the share's date when it copies). A local build newer than the share is never "updated" backwards, and an unreachable share is silent: the check gives up after four seconds.
+3. **What the user sees:** the Reload button turns green and reads Update. At startup a prompt also offers the build, with "Not now" remembered per build and a "stop asking" tickbox.
+4. **What Yes does:** the app writes a small waiter script, closes, the waiter runs the share's installer once the exe is released, and the app reopens on the new build.
 
-A named mutex prevents two concurrent prompts, and the same flow is reachable manually from
-**Help → Check for Updates…** in the GUI.
+The first version did this with a per-user scheduled task and a PowerShell script. It was retired
+because the PowerShell hop flashed a console window on every launch; the installer and the app now
+clean up what it left behind.
+
+</Expandable>
+
+<Expandable title="Build & Release">
+
+One `build.bat` does the whole release:
+
+1. Archives the outgoing exe, then commits and tags the source, so any build that shipped can be reproduced with a checkout.
+2. Builds the single-file exe.
+3. Asks for a channel, test or live. A test push writes a separate exe and its own installer next to the live build, never over it, and nobody is offered a test build automatically.
+4. Pushes to both studio shares and byte-checks the exe on each, or installs on this machine only.
 
 </Expandable>
 
@@ -190,6 +218,8 @@ A named mutex prevents two concurrent prompts, and the same flow is reachable ma
 
 - **Robust drive-path resolution:** The SQLite DB root resolves to the mapped `T:` drive when present and falls back to its UNC equivalent, because fresh logons and Deadline workers don't always have login-script drive mappings in place.
 - **Crash-free in-Max listener:** The job-queue pump was moved off a `System.Windows.Forms.Timer` (which faulted re-entrantly inside the .NET↔MaxScript marshaling layer) onto a native MaxScript `rollout timer` hosted in an off-screen dialog, eliminating a class of unhandled-exception crashes.
+- **In-Max listener by design, not everywhere:** The GUI talks to Max through a startup script that opens a local socket. After connecting, the app compares the listener's version and asks for a Max restart if it is stale; background Max instances (render nodes, batch mode) never start it.
+- **Supportable by other people:** A rotating session log, a fatal-only crash log, crash dumps, a startup timing trace and per-scene fix logs, each tied to one kind of problem in the user docs, so a bug report arrives with the right file.
 - **Two independent studios:** Each studio has its own bundle copy, its own database, and its own push cadence, with no cross-studio fallback: a machine pulls only from the studio it was installed from.
 
 ---
@@ -199,6 +229,6 @@ A named mutex prevents two concurrent prompts, and the same flow is reachable ma
 - **Language:** Python 3.7–3.12 (Max-bundled interpreters)
 - **GUI:** PyQt
 - **Max integration:** `pymxs`, MaxScript, COM & socket transports
-- **Packaging & deploy:** PyInstaller (onefile), PowerShell updater, Windows scheduled tasks, SQLite
+- **Packaging & deploy:** PyInstaller (onefile), batch installers, in-app update check, SQLite (one database per studio)
 
 </div>

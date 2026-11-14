@@ -4,7 +4,9 @@
 // and links to the full-window shot at `base/full/<file>`.
 //
 //   <ScreenshotGallery base="/private/img/omnitool" width={2142} height={1374} groups={[
-//     { title: 'Prep', shots: [{ file: '01_prep_health.png', label: 'Health' }] },
+//     { title: 'Prep', note: 'What this tab is for.', shots: [
+//       { file: '01_prep_health.png', label: 'Health', caption: 'What the shot shows.' },
+//     ] },
 //   ]} />
 //
 // Used by private projects, whose images live in private-assets/img/ (not git,
@@ -15,13 +17,14 @@ const { base, groups, width, height } = Astro.props;
   {groups.map((g) => (
     <section>
       <h3>{g.title}</h3>
+      {g.note && <p class="shots-note">{g.note}</p>}
       <div class="shots-grid">
         {g.shots.map((s) => (
           <figure>
             <a href={`${base}/full/${s.file}`} target="_blank" rel="noopener" title="Open the full window">
               <img src={`${base}/${s.file}`} alt={`${g.title}: ${s.label}`} width={width} height={height} loading="lazy" decoding="async" />
             </a>
-            <figcaption>{s.label}</figcaption>
+            <figcaption><strong>{s.label}</strong>{s.caption && <span> {s.caption}</span>}</figcaption>
           </figure>
         ))}
       </div>
@@ -37,6 +40,15 @@ const { base, groups, width, height } = Astro.props;
   .shots h3 {
     margin: 2rem 0 0.8rem;
     text-align: left;
+  }
+  .shots-note {
+    max-width: 800px;
+    margin: 0 0 1rem;
+    text-align: left;
+    color: var(--text-secondary);
+  }
+  .shots figcaption strong {
+    color: var(--text-color);
   }
   .shots-grid {
     display: grid;
