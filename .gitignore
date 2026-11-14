@@ -12,6 +12,7 @@ public/includes/contact_submissions.json
 # Astro / Node
 node_modules/
 dist/
+dist-private/
 .astro/
 .DS_Store
 
@@ -21,3 +22,7 @@ dist/
 # Subagent worktrees (gated subagent workflow; see LEDGER.md)
 .claude/worktrees/
 .claude/agent-memory-local/
+
+# The private hub's screenshots (/private/img/, served only by the gate). Never
+# in git: they show employer work. ./deploy-private.sh syncs them to the host.
+/private-assets/

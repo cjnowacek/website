@@ -24,8 +24,9 @@ rsync -avzP --exclude='*.kra' --exclude='*~' static/img/ siteground:www/cjnowace
 There is no lint step. The gate (see the workflow section below and `LEDGER.md`) is:
 
 ```bash
-npm run build                  # 16 pages
-node scripts/check-dist.mjs    # smoke check of dist/: nav routes, project pages and cards, shipped files, no em dashes
+npm run build                  # astro build, then scripts/split-private.mjs moves dist/private to dist-private/pages
+node scripts/check-dist.mjs    # smoke check of dist/: nav routes, project pages and cards, shipped files, nothing private in dist/, no em dashes
+bash scripts/check-private.sh  # runs the private hub's gate under php -S and attacks it
 bash scripts/check-php.sh      # php -l on the PHP that ships
 ```
 
@@ -35,6 +36,7 @@ Pushing to `main` auto-deploys: `.github/workflows/deploy.yml` builds the Astro 
 
 Protected on the server (never deleted by the deploy):
 
+- `private-data/` (next to `public_html`, not in it): the private hub's pages are synced there by the deploy; its screenshots and password hash only by `./deploy-private.sh`
 - `/play/` — deployed separately, only via `./deploy-play.sh`
 - `/includes/contact_submissions.json` — live contact-form log
 - `/.well-known/` — host-managed (Let's Encrypt)
@@ -61,6 +63,15 @@ One `.mdx` file per project under `src/content/projects/` holds both the card me
 Listing pages pass an explicit ordered id array to `getProjectCards()` (`src/lib/projects.js`): `index.astro` (featured), `techart.astro`, `devops.astro`. An id absent from every list is unlisted but still builds a reachable detail page (currently `sintern`). `draft: true` keeps a project out of the build entirely (`deadline-deploy`, `omnitool`: not yet IP-safe). `getProjectCards()` drops an id it cannot find without error; `scripts/check-dist.mjs` catches that.
 
 **To add a project:** create the `.mdx` in `src/content/projects/`, add its id to the relevant page's list, and drop the card image/video into `static/img/project-cards/` (via Dropbox, not git; small mp4 hover videos are the tracked exception).
+
+### The private hub (`/private/`)
+
+Password-protected, unlisted, noindex: work that can be shown on request but not published (currently `omnitool`). A project with `private: true` in its frontmatter is built at `/private/<id>/` and nowhere public; `src/pages/private/` holds the hub page, the detail route and the login form template.
+
+- Nothing private is in the webroot. `npm run build` moves `dist/private/` to `dist-private/pages/`; the deploy syncs that to `private-data/pages/` beside `public_html`. `public/.htaccess` rewrites every `/private...` request to `public/includes/private_gate.php`, which checks the session and serves from `private-data/`. (A deny rule in `.htaccess` would not be a lock: SiteGround's nginx serves static files without asking Apache.)
+- Screenshots live in `private-assets/img/` (gitignored, NOT `static/img`, never in git) and are referenced as `/private/img/...`. `./deploy-private.sh` syncs them; `./deploy-private.sh --set-password` sets the one shared password (only its hash is stored, on the host; changing it logs everyone out). Keep a copy of `private-assets/` outside the repo.
+- Preview: `astro dev` shows `/private/` without the lock; `scripts/preview-private.sh` serves the built site with the real gate (password `preview`).
+- To add a private project: `private: true` in its `.mdx`, images under `private-assets/img/<id>/`, then `./deploy-private.sh` and push.
 
 ### Everything else
 
@@ -100,15 +111,18 @@ Work is done in tasks, each given to a subagent (`LEDGER.md` is the ledger of th
 website/
 ├── .claude/                       gate (protected paths), hooks/gate-guard.py, agents/implementer.md, KICKOFF.md, worktrees/ (gitignored)
 ├── LEDGER.md                      The workflow's record: gate, running tasks, landed tasks, lessons
-├── scripts/                       check-dist.mjs, check-php.sh (the gate's checks)
+├── scripts/                       check-dist.mjs, check-private.sh, check-php.sh (the gate's checks), split-private.mjs (build step)
 ├── .github/workflows/deploy.yml   Build Astro + rsync dist/ to SiteGround on push to main
 ├── astro.config.mjs
 ├── deploy.sh                      Manual full-site deploy (same protections as CI)
 ├── deploy-play.sh                 Deploys ONLY play/
+├── deploy-private.sh              Private hub: syncs private-assets/img, sets the password
+├── private-assets/                Gitignored; the private hub's screenshots
 ├── play/                          Traitors & Titans room directory (PHP, separate deploy)
 ├── public/                        Copied into dist/ as-is
 │   ├── .htaccess                  Redirects from old PHP URLs, cache headers
 │   ├── includes/contact_handler.php
+│   ├── includes/private_gate.php  The lock on /private/
 │   └── static -> ../static        Symlink; see Images
 ├── src/
 │   ├── config.js                  Nav, SEO metadata, social links

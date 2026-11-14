@@ -1,0 +1,71 @@
+---
+// src/components/ScreenshotGallery.astro: a captioned grid of screenshots for a
+// project page, in groups. Each thumbnail is the cropped shot at `base/<file>`
+// and links to the full-window shot at `base/full/<file>`.
+//
+//   <ScreenshotGallery base="/private/img/omnitool" width={2142} height={1374} groups={[
+//     { title: 'Prep', shots: [{ file: '01_prep_health.png', label: 'Health' }] },
+//   ]} />
+//
+// Used by private projects, whose images live in private-assets/img/ (not git,
+// not static/img) and are served by the gate only to a logged-in visitor.
+const { base, groups, width, height } = Astro.props;
+---
+<div class="shots">
+  {groups.map((g) => (
+    <section>
+      <h3>{g.title}</h3>
+      <div class="shots-grid">
+        {g.shots.map((s) => (
+          <figure>
+            <a href={`${base}/full/${s.file}`} target="_blank" rel="noopener" title="Open the full window">
+              <img src={`${base}/${s.file}`} alt={`${g.title}: ${s.label}`} width={width} height={height} loading="lazy" decoding="async" />
+            </a>
+            <figcaption>{s.label}</figcaption>
+          </figure>
+        ))}
+      </div>
+    </section>
+  ))}
+</div>
+
+<style>
+  .shots {
+    max-width: 1300px;
+    margin: 0 auto 40px;
+  }
+  .shots h3 {
+    margin: 2rem 0 0.8rem;
+    text-align: left;
+  }
+  .shots-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(min(100%, 420px), 1fr));
+    gap: 20px;
+  }
+  .shots figure {
+    margin: 0;
+  }
+  .shots a {
+    display: block;
+    border-radius: 8px;
+    overflow: hidden;
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    background: var(--nav-bg);
+  }
+  .shots a:hover,
+  .shots a:focus-visible {
+    border-color: var(--header-color);
+  }
+  .shots img {
+    display: block;
+    width: 100%;
+    height: auto;
+  }
+  .shots figcaption {
+    margin-top: 0.5rem;
+    color: var(--text-secondary);
+    font-size: 0.9rem;
+    text-align: left;
+  }
+</style>

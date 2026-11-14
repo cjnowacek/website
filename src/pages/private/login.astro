@@ -1,0 +1,63 @@
+---
+// src/pages/private/login.astro: the login form of the private hub, as a
+// template. It is never served as it is: the gate
+// (public/includes/private_gate.php) reads the built page and replaces
+// %%LOGIN_ERROR%% (empty, or "Wrong password.") and %%NEXT%% (the page to
+// return to), then sends it to anyone who asks for /private/... without a
+// session. Keep both tokens; scripts/check-dist.mjs checks for them.
+import Layout from '../../layouts/Layout.astro';
+---
+<Layout title="Private" description="Work shown on request." noindex>
+  <div class="container" style="max-width: 1000px;">
+    <h2>Private</h2>
+    <form class="private-login" method="post" action="/private/login">
+      <p>This part of the site holds work I can show on request. Enter the password you were given.</p>
+      <p class="private-login-error" role="alert">%%LOGIN_ERROR%%</p>
+      <input type="hidden" name="next" value="%%NEXT%%" />
+      <div class="form-group">
+        <label for="password">Password</label>
+        <input type="password" id="password" name="password" autocomplete="current-password" required autofocus />
+      </div>
+      <button type="submit" class="project-link">Enter</button>
+      <p class="private-login-ask">No password? <a href="/contact">Ask me for one.</a></p>
+    </form>
+  </div>
+</Layout>
+
+<style>
+  .private-login {
+    max-width: 420px;
+    margin: 0 auto 4rem;
+    padding: 28px;
+    background: var(--form-bg);
+    border-radius: 12px;
+  }
+  .private-login p {
+    margin: 0 0 1rem;
+    color: var(--text-secondary);
+  }
+  .private-login-error {
+    color: #ffb199 !important;
+    font-weight: 600;
+  }
+  .private-login-error:empty {
+    display: none;
+  }
+  .private-login input[type='password'] {
+    width: 100%;
+    box-sizing: border-box;
+  }
+  .private-login button {
+    border: 0;
+    cursor: pointer;
+    font: inherit;
+    margin-top: 0.5rem;
+  }
+  .private-login-ask {
+    margin: 1.25rem 0 0 !important;
+    font-size: 0.9rem;
+  }
+  .private-login-ask a {
+    color: var(--accent-muted);
+  }
+</style>

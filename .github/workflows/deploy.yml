@@ -70,3 +70,19 @@ jobs:
           done
           echo "::error::rsync failed after 3 attempts"
           exit 1
+
+      # The private hub's pages (/private/, behind includes/private_gate.php) go
+      # NEXT TO public_html, not into it: `npm run build` moved them out of dist/
+      # into dist-private/pages/. Their screenshots and the password hash are
+      # not in git; ./deploy-private.sh puts those in the same private-data/.
+      - name: Deploy private hub pages (outside the webroot)
+        run: |
+          for attempt in 1 2 3; do
+            [ "$attempt" -gt 1 ] && { echo "rsync attempt $attempt after 30s..."; sleep 30; }
+            rsync -avz --delete --mkpath --chmod=D700,F600 \
+            -e "ssh -i ~/.ssh/deploy_key -p ${{ secrets.SG_PORT || '18765' }}" \
+            dist-private/pages/ "${{ secrets.SG_USER }}@${{ secrets.SG_HOST }}:www/cjnowacek.com/private-data/pages/" \
+              && exit 0
+          done
+          echo "::error::rsync of the private pages failed after 3 attempts"
+          exit 1

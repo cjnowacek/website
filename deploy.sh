@@ -36,4 +36,11 @@ rsync -avzP --delete \
   -e "ssh -p $PORT" \
   "$SCRIPT_DIR/dist/" "$HOST:$REMOTE/"
 
+# The private hub's pages go next to public_html, not into it (the build moved
+# them to dist-private/pages/). Screenshots and password: ./deploy-private.sh.
+echo "==> Deploying dist-private/pages/ to $HOST:${REMOTE%/public_html}/private-data/pages/"
+rsync -avzP --delete --mkpath --chmod=D700,F600 \
+  -e "ssh -p $PORT" \
+  "$SCRIPT_DIR/dist-private/pages/" "$HOST:${REMOTE%/public_html}/private-data/pages/"
+
 echo "==> Done"

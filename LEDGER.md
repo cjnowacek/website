@@ -11,7 +11,8 @@ after every task.
 
     npm run build                  # Astro build: schema and MDX errors, broken imports. 16 page(s) built
     node scripts/check-dist.mjs    # smoke check of dist/: 67 checks, 0 failed (16 pages, 8 projects, 10 redirect rules)
-    bash scripts/check-php.sh      # php -l on the PHP that ships: 3 files, 0 errors
+    bash scripts/check-private.sh  # the private hub's gate run under php -S and attacked: 42 checks, 0 failed
+    bash scripts/check-php.sh      # php -l on the PHP that ships: 5 files, 0 errors
 
 A worktree needs `node_modules` before the build: the main session junctions
 the main checkout's `node_modules` into it when it creates the worktree
@@ -133,6 +134,24 @@ found, what is known and accepted)
   a1564fd. Gate on it is green except `check-media` on the five Dropbox card
   images that item 3 under Next replaces; lands together with those assets
   after the user's look.
+- `private-hub` (branch `private-hub`, main session, no worktree; kept by
+  the main session because a lock fails silently): the password-protected
+  hub at `/private/` with OmniTool as its first project (the user,
+  2026-11-13: styled login page, a general hub, cropped shots that open the
+  full window, unlisted). Design and files: CLAUDE.md "The private hub".
+  Gate on the branch: 22 pages built (19 public + 3 moved to
+  `dist-private/pages`), check-dist 314/0, check-private 42/0, check-php
+  5/0. NOT landed: waits for the user's look
+  (`scripts/preview-private.sh`, password `preview`) and their go-ahead to
+  touch the host. Landing order: `./deploy-private.sh` (18 + 18 screenshots
+  from `private-assets/img/omnitool`), `./deploy-private.sh --set-password`,
+  then merge and push. After the deploy, verify on the live site what the
+  gate cannot show locally: that `/private/omnitool/` without a cookie gets
+  the login form right after a logged-in fetch (SiteGround's dynamic cache
+  must not replay a private page), that `/private/img/...png` reaches PHP
+  (nginx must not 404 it first), and that the host's PHP runs the gate.
+  The screenshots show client names, server names and the user's login;
+  that is why they are only behind the password.
 ## Next, in order
 
 Sitting 2026-09-26, "optimization". Measured first (Chrome, live site):

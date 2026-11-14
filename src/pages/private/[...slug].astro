@@ -1,0 +1,23 @@
+---
+// src/pages/private/[...slug].astro: the detail page of every `private: true`
+// project, at /private/<id>/. Built like the public detail pages, then moved
+// out of dist/ by scripts/split-private.mjs and served only by the gate
+// (public/includes/private_gate.php) to a visitor who has the password.
+import { render } from 'astro:content';
+import ProjectDetail from '../../layouts/ProjectDetail.astro';
+import { getPrivateProjects } from '../../lib/projects.js';
+
+export async function getStaticPaths() {
+  const projects = await getPrivateProjects();
+  return projects.map((project) => ({
+    params: { slug: project.id },
+    props: { project },
+  }));
+}
+
+const { project } = Astro.props;
+const { Content } = await render(project);
+---
+<ProjectDetail project={project}>
+  <Content />
+</ProjectDetail>

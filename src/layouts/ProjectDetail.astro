@@ -12,7 +12,9 @@ const categories = {
   devops: ['Pipeline', '/devops'],
   other: ['Other Projects', '/other'],
 };
-const [categoryLabel, categoryHref] = categories[d.category];
+// A private project (`private: true`) lives in the password-protected hub, so
+// its breadcrumb and back link lead there, not to the public category page.
+const [categoryLabel, categoryHref] = d.private ? ['Private', '/private/'] : categories[d.category];
 const title = d.pageTitle ?? `${d.title} - ${categoryLabel}`;
 // Media first: the card image (or an explicit `hero`) sits under the title.
 const heroSrc = d.hero ?? d.image;
@@ -28,7 +30,7 @@ const facts = [
   ['Platform', d.meta?.platforms],
 ].filter(([, v]) => v);
 ---
-<Layout title={title} description={d.tagline ?? d.description} image={d.image ?? undefined} type="article">
+<Layout title={title} description={d.tagline ?? d.description} image={d.image ?? undefined} type="article" noindex={d.private}>
   <div class="container" style="max-width: 1300px;">
     <Breadcrumb
       crumbs={[

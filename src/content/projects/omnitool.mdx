@@ -1,15 +1,15 @@
 ---
-title: OmniTool — Pipeline App
+title: 'OmniTool: Pipeline App'
 tagline: One Python core shipped as CLI, PyQt desktop app, and in-Max tool
 company: Pipeline Tooling
 category: devops
-draft: true # names vendors and node counts from employer work; scrub before publishing
+private: true # names vendors and node counts from employer work: only in the password-protected hub (/private/omnitool/)
 featured: false
 order: 2
 pageTitle: "OmniTool: Pipeline App - Pipeline"
 description: >-
   A Python/PyQt application for automating 3ds Max scene prep and render-farm job submission.
-  One codebase runs as a CLI, a desktop GUI, and natively inside Max — shipped as a self-updating,
+  One codebase runs as a CLI, a desktop GUI, and natively inside Max, shipped as a self-updating,
   EDR-whitelisted single-file executable to ~130 machines across two studios.
 highlights:
   - One codebase runs as CLI, PyQt GUI, and natively inside 3ds Max
@@ -23,13 +23,14 @@ meta:
   team_size: Solo
 ---
 import Expandable from '../../components/Expandable.astro';
+import ScreenshotGallery from '../../components/ScreenshotGallery.astro';
 
 <div class="about-text" style="max-width: 800px; margin: 0 auto 40px auto; text-align: left;">
 
 OmniTool is a Python application for automating **3ds Max scene preparation and render-farm job
 submission**. Its defining trait is reach: a single core library runs from three completely
-different contexts — a command line, a PyQt desktop GUI, and natively inside 3ds Max through
-`pymxs` — with the same code doing the work in each.
+different contexts (a command line, a PyQt desktop GUI, and natively inside 3ds Max through
+`pymxs`) with the same code doing the work in each.
 
 Just as interesting is how it ships. OmniTool is delivered as a self-updating, single-file
 executable to roughly **130 machines across two independent studios**, and a large share of the
@@ -38,6 +39,52 @@ security (SentinelOne EDR), locked-down accounts, flaky drive mappings, and the 
 embedding a Qt app inside Max.
 
 </div>
+
+## The App
+
+<div class="about-text" style="max-width: 800px; margin: 0 auto 20px auto; text-align: left;">
+
+The desktop GUI, tab by tab. Each shot shows the main panel; click one to open the full window.
+
+</div>
+
+<ScreenshotGallery
+  base="/private/img/omnitool"
+  width={2142}
+  height={1374}
+  groups={[
+    { title: 'Prep', shots: [
+      { file: '01_prep_health.png', label: 'Health' },
+      { file: '02_prep_batch.png', label: 'Batch' },
+      { file: '03_prep_snapshots.png', label: 'Snapshots' },
+      { file: '04_prep_dag_view.png', label: 'DAG View' },
+    ] },
+    { title: 'Rendering: Visualizer', shots: [
+      { file: '05_viz_setup_classifier.png', label: 'Setup: Classifier' },
+      { file: '06_viz_setup_materials.png', label: 'Setup: Materials' },
+      { file: '07_viz_combinations.png', label: 'Combinations' },
+      { file: '08_viz_full_renders.png', label: 'Full Renders' },
+      { file: '09_viz_isolated_objects.png', label: 'Isolated Objects' },
+      { file: '10_viz_xref_swaps.png', label: 'XRef Swaps' },
+      { file: '11_viz_submitter.png', label: 'Submitter' },
+      { file: '12_viz_graph.png', label: 'Graph' },
+    ] },
+    { title: 'Rendering: Batch Render Manager', shots: [
+      { file: '13_batch_render_manager.png', label: 'Batch Render Manager' },
+    ] },
+    { title: 'Dashboard', shots: [
+      { file: '14_dashboard_activity.png', label: 'Activity' },
+    ] },
+    { title: 'System', shots: [
+      { file: '15_system_computer.png', label: 'Computer' },
+      { file: '16_system_errors.png', label: 'Errors' },
+      { file: '17_system_settings.png', label: 'Settings' },
+    ] },
+    { title: 'Beta', shots: [
+      { file: '18_beta.png', label: 'Beta' },
+    ] },
+  ]}
+/>
 
 ## Key Features
 
@@ -51,13 +98,13 @@ embedding a Qt app inside Max.
   <div class="grid-item">
     <div class="project-info">
       <h3>🛡️ EDR-Aware Packaging</h3>
-      <p class="project-description">PyInstaller build deliberately tuned — onefile, UPX off, redirected runtime tmpdir — so the studio's SentinelOne whitelist applies cleanly.</p>
+      <p class="project-description">PyInstaller build deliberately tuned (onefile, UPX off, redirected runtime tmpdir) so the studio's SentinelOne whitelist applies cleanly.</p>
     </div>
   </div>
   <div class="grid-item">
     <div class="project-info">
       <h3>🔄 Silent Auto-Updater</h3>
-      <p class="project-description">A per-user scheduled task SHA-256-compares the share build every 10 minutes and prompts to update — with a per-build decline memory.</p>
+      <p class="project-description">A per-user scheduled task SHA-256-compares the share build every 10 minutes and prompts to update, with a per-build decline memory.</p>
     </div>
   </div>
   <div class="grid-item">
@@ -72,7 +119,7 @@ embedding a Qt app inside Max.
 
 <Expandable title="Architecture">
 
-The core library has *zero* UI knowledge — the CLI and GUI are thin shells over it. The connection
+The core library has *zero* UI knowledge: the CLI and GUI are thin shells over it. The connection
 is injected by a `get_connection()` factory that auto-detects whether OmniTool is running natively
 inside Max or talking to it externally (COM / socket). A Python 3.7 floor keeps it compatible with
 the interpreter bundled in Max 2022, all the way up to 3.12 in Max 2026.
@@ -110,10 +157,10 @@ Shipping a PyInstaller binary into a studio running SentinelOne meant the packag
 the feature. Each setting in the build spec exists because an alternative tripped the
 endpoint-security stack:
 
-- **onefile, not onedir** — SentinelOne flagged the onedir launcher + `_internal\` DLL layout as DLL sideloading. The studio whitelist applies cleanly only to the single-file build.
-- **UPX disabled** — UPX-packed binaries trip static analysis regardless of payload.
-- **Redirected runtime tmpdir** — the bootloader extracts to `%LOCALAPPDATA%\OmniTool\runtime` instead of `%TEMP%`, reducing AV friction and avoiding orphaned extraction folders.
-- **Explicit AppUserModelID** — set before `QApplication` starts so Windows shows OmniTool's icon instead of the generic embedded-Python feather.
+- **onefile, not onedir:** SentinelOne flagged the onedir launcher + `_internal\` DLL layout as DLL sideloading. The studio whitelist applies cleanly only to the single-file build.
+- **UPX disabled:** UPX-packed binaries trip static analysis regardless of payload.
+- **Redirected runtime tmpdir:** the bootloader extracts to `%LOCALAPPDATA%\OmniTool\runtime` instead of `%TEMP%`, reducing AV friction and avoiding orphaned extraction folders.
+- **Explicit AppUserModelID:** set before `QApplication` starts so Windows shows OmniTool's icon instead of the generic embedded-Python feather.
 
 </Expandable>
 
@@ -122,14 +169,14 @@ endpoint-security stack:
 The shippable artifact is a flat four-file bundle that mirrors 1:1 to a studio share. `install.bat`
 copies the exe to the user's desktop, drops a shortcut, headlessly installs the Max startup listener
 via `omnitool.exe --install-listener`, writes a studio sentinel, and registers a per-user
-**OmniTool Updater** scheduled task. `uninstall.bat` reverses every step in pure batch — no
+**OmniTool Updater** scheduled task. `uninstall.bat` reverses every step in pure batch, with no
 dependency on the exe.
 
 The updater task then runs every 10 minutes and:
 
 1. Reads the studio sentinel to find the pinned share root.
 2. SHA-256-compares the share's `omnitool.exe` against the local copy; exits silently if they match.
-3. Honors a per-hash "decline" file, so saying No to one build doesn't nag — but a fresh push invalidates the decline automatically.
+3. Honors a per-hash "decline" file, so saying No to one build doesn't nag, but a fresh push invalidates the decline automatically.
 4. Otherwise prompts with a 60-second auto-yes timer, then shells `install.bat` in unattended mode and relaunches.
 
 A named mutex prevents two concurrent prompts, and the same flow is reachable manually from
@@ -141,9 +188,9 @@ A named mutex prevents two concurrent prompts, and the same flow is reachable ma
 
 <div class="about-text" style="max-width: 800px; margin: 0 auto 40px auto; text-align: left;">
 
-- **Robust drive-path resolution:** The SQLite DB root resolves to the mapped `T:` drive when present and falls back to its UNC equivalent — because fresh logons and Deadline workers don't always have login-script drive mappings in place.
-- **Crash-free in-Max listener:** The job-queue pump was moved off a `System.Windows.Forms.Timer` (which faulted re-entrantly inside the .NET↔MaxScript marshaling layer) onto a native MaxScript `rollout timer` hosted in an off-screen dialog — eliminating a class of unhandled-exception crashes.
-- **Two independent studios:** Each studio has its own bundle copy, its own database, and its own push cadence, with no cross-studio fallback — a machine pulls only from the studio it was installed from.
+- **Robust drive-path resolution:** The SQLite DB root resolves to the mapped `T:` drive when present and falls back to its UNC equivalent, because fresh logons and Deadline workers don't always have login-script drive mappings in place.
+- **Crash-free in-Max listener:** The job-queue pump was moved off a `System.Windows.Forms.Timer` (which faulted re-entrantly inside the .NET↔MaxScript marshaling layer) onto a native MaxScript `rollout timer` hosted in an off-screen dialog, eliminating a class of unhandled-exception crashes.
+- **Two independent studios:** Each studio has its own bundle copy, its own database, and its own push cadence, with no cross-studio fallback: a machine pulls only from the studio it was installed from.
 
 ---
 

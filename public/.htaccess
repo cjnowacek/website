@@ -29,6 +29,12 @@ RewriteBase /
 # Never rewrite the live PHP endpoints (POST targets — a redirect would drop the body).
 RewriteRule ^(includes|play)(/|$) - [L]
 
+# The private hub: every /private request is answered by the gate, which asks
+# for the password and then serves pages and screenshots from private-data/,
+# outside the webroot (see includes/private_gate.php). No file under /private/
+# exists here, on purpose.
+RewriteRule ^private(/.*)?$ /includes/private_gate.php [L]
+
 # The room models (.glb under /static/img/models/) are served only to pages on
 # this site: not to a pasted URL, a hotlink or a scraper. The Referer header
 # can be faked or stripped, so this is a speed bump, not a lock (the user

@@ -1,0 +1,81 @@
+---
+// src/pages/private/index.astro: the private hub's landing page, /private/.
+// Lists every `private: true` project. Moved out of dist/ after the build and
+// served only behind the password (see public/includes/private_gate.php).
+import Layout from '../../layouts/Layout.astro';
+import { getPrivateProjects } from '../../lib/projects.js';
+
+const projects = await getPrivateProjects();
+---
+<Layout title="Private" description="Work shown on request." noindex>
+  <div class="container" style="max-width: 1000px;">
+    <h2>Private</h2>
+    <p class="private-intro">
+      Work I can show on request but not publish. Please do not share these pages or their screenshots.
+    </p>
+
+    <ul class="private-list">
+      {projects.map((p) => (
+        <li>
+          <a href={`/private/${p.id}/`}>
+            <h3>{p.data.title}</h3>
+            <p>{p.data.tagline ?? p.data.description}</p>
+            {p.data.tech_tags.length > 0 && (
+              <ul class="tech-tags">
+                {p.data.tech_tags.map((t) => <li class="tech-tag">{t}</li>)}
+              </ul>
+            )}
+          </a>
+        </li>
+      ))}
+    </ul>
+
+    <p class="private-logout"><a href="/private/logout">Log out</a></p>
+  </div>
+</Layout>
+
+<style>
+  .private-intro {
+    max-width: 700px;
+    margin: 0 auto 2rem;
+    text-align: center;
+    color: var(--text-secondary);
+  }
+  .private-list {
+    list-style: none;
+    padding: 0;
+    margin: 0 auto;
+    max-width: 800px;
+    display: grid;
+    gap: 16px;
+  }
+  .private-list > li > a {
+    display: block;
+    padding: 20px 24px;
+    background: var(--form-bg);
+    border-radius: 12px;
+    color: var(--text-color);
+    text-decoration: none;
+    border: 1px solid transparent;
+  }
+  .private-list > li > a:hover,
+  .private-list > li > a:focus-visible {
+    border-color: var(--header-color);
+  }
+  .private-list h3 {
+    margin: 0 0 0.4rem;
+    color: var(--header-color);
+  }
+  .private-list p {
+    margin: 0 0 0.8rem;
+    color: var(--text-secondary);
+  }
+  .private-logout {
+    margin: 2.5rem 0;
+    text-align: center;
+    font-size: 0.9rem;
+  }
+  .private-logout a {
+    color: var(--text-secondary);
+  }
+</style>
