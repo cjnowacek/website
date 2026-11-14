@@ -5,7 +5,7 @@
 # Exit 0 prints "check-php: N files, 0 errors"; any error exits 1.
 set -u
 cd "$(dirname "$0")/.."
-files=(public/includes/contact_handler.php play/index.php play/api.php)
+files=(public/includes/contact_handler.php public/includes/private_gate.php scripts/private-router.php play/index.php play/api.php)
 errors=0
 for f in "${files[@]}"; do
   if ! php -l "$f" >/dev/null 2>&1; then

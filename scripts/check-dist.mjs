@@ -21,7 +21,14 @@
 //     from the project page, carrying every room of src/data/shore-house-explore.json
 //     in its embedded data, its three.js chunk bundled, and (where the Dropbox
 //     sync folder exists) every room file present and within budget;
-//   - no built page contains an em dash (site copy rule in CLAUDE.md).
+//   - the private hub (/private/, behind public/includes/private_gate.php):
+//     nothing private is in dist/ (no dist/private, no private project's page
+//     or title in any text file, no /private/ URL in the sitemap); the build
+//     moved the private pages to dist-private/pages/ (the hub, the login
+//     template with its form and tokens, one page per `private: true` project,
+//     all noindex); the gate and its rewrite rule ship; and (where
+//     private-assets/ exists) every /private/img/ file a page names is there;
+//   - no built page, public or private, contains an em dash (site copy rule in CLAUDE.md).
 // Exit 0 prints "check-dist: N checks, 0 failed"; exit 1 lists each failure.
 import { existsSync, readFileSync, readdirSync, statSync } from 'node:fs';
 import { dirname, join, relative } from 'node:path';
@@ -71,7 +78,10 @@ const projects = walk(projectsDir)
     return {
       id: posix(relative(projectsDir, f)).replace(/\.mdx$/, ''),
       category: field('category'),
-      draft: /^true\b/.test(field('draft')),
+      title: field('title').replace(/^['"]|['"]$/g, ''),
+      private: /^true\b/.test(field('private')),
+      // A private project is never public: for the public site it counts as a draft.
+      draft: /^true\b/.test(field('draft')) || /^true\b/.test(field('private')),
     };
   });
 check(projects.length > 0, 'no project .mdx files found under src/content/projects');
@@ -199,7 +209,49 @@ if (existsSync(SYNC)) {
   }
 }
 
-// 7. No em dash in any built page.
+// 7. The private hub. Public side first: nothing private may be in dist/.
+const privateProjects = projects.filter((p) => p.private);
+const privDist = join(root, 'dist-private');
+const privPage = (route) => join(privDist, 'pages', route.replace(/^\//, ''), 'index.html');
+check(privateProjects.length > 0, 'no project has `private: true` (the private hub would be empty)');
+check(!existsSync(join(dist, 'private')), 'dist/private exists: the build did not move the private pages out of the public site');
+const textFiles = walk(dist).filter((f) => /\.(html|xml|js|css|json|txt)$/.test(f));
+for (const f of textFiles) {
+  const body = read(f);
+  for (const p of privateProjects) check(!body.includes(p.title), `public file ${posix(relative(dist, f))} contains the private project title '${p.title}'`);
+  check(!body.includes('/private/img/'), `public file ${posix(relative(dist, f))} names a /private/img/ file`);
+  if (f.endsWith('.xml')) check(!body.includes('/private'), `${posix(relative(dist, f))} lists a /private URL`);
+}
+// The gate and the rule that sends every /private request through it.
+check(existsSync(join(dist, 'includes/private_gate.php')), 'includes/private_gate.php missing from dist');
+check(/^RewriteRule \^private\(\/\.\*\)\?\$ \/includes\/private_gate\.php \[L\]$/m.test(ht), '.htaccess does not rewrite ^private(/.*)?$ to /includes/private_gate.php');
+// Private side: what the gate serves, built into dist-private/pages/.
+check(existsSync(privPage('/')), 'dist-private/pages/index.html (the hub) was not built');
+const login = read(privPage('/login'));
+check(login.includes('action="/private/login"') && login.includes('type="password"'), 'the login template has no password form posting to /private/login');
+check(login.includes('%%LOGIN_ERROR%%') && login.includes('%%NEXT%%'), 'the login template lacks the %%LOGIN_ERROR%% / %%NEXT%% tokens the gate fills in');
+const hub = read(privPage('/'));
+for (const p of privateProjects) {
+  check(existsSync(privPage(`/${p.id}`)), `private project ${p.id} has no page at dist-private/pages/${p.id}/`);
+  check(hub.includes(`href="/private/${p.id}/"`), `the hub does not link to /private/${p.id}/`);
+}
+const privPages = existsSync(privDist) ? walk(privDist).filter((f) => f.endsWith('.html')) : [];
+const assets = join(root, 'private-assets');
+let assetNote = 'private-assets/ absent, screenshots not checked';
+let shots = 0;
+for (const f of privPages) {
+  const body = read(f);
+  const name = `dist-private/${posix(relative(privDist, f))}`;
+  check(/<meta name="robots" content="noindex/.test(body), `${name} is not noindex`);
+  check(!body.includes('—'), `${name} contains an em dash`);
+  for (const m of body.matchAll(/["'](\/private\/img\/[^"']+)["']/g)) {
+    shots++;
+    if (existsSync(assets)) check(existsSync(join(assets, m[1].replace(/^\/private\//, ''))), `${name} names ${m[1]}, which is not in private-assets/`);
+  }
+}
+if (existsSync(assets)) assetNote = `${shots} private image references checked against private-assets/`;
+
+// 8. No em dash in any built page.
 const pages = walk(dist).filter((f) => f.endsWith('.html'));
 check(pages.length >= navItems.length + 1, `only ${pages.length} html pages built`);
 for (const f of pages) check(!read(f).includes('—'), `${posix(relative(dist, f))} contains an em dash`);
@@ -209,4 +261,4 @@ if (failures.length) {
   console.error(`check-dist: ${checks} checks, ${failures.length} failed`);
   process.exit(1);
 }
-console.log(`check-dist: ${checks} checks, 0 failed (${pages.length} pages, ${projects.filter((p) => !p.draft).length} projects, ${liveModels.length} models, ${rooms.length} walkthrough rooms, ${rules} redirect rules; ${syncNote})`);
+console.log(`check-dist: ${checks} checks, 0 failed (${pages.length} pages, ${projects.filter((p) => !p.draft).length} projects, ${liveModels.length} models, ${rooms.length} walkthrough rooms, ${rules} redirect rules; ${syncNote}; ${privPages.length} private pages, ${assetNote})`);
