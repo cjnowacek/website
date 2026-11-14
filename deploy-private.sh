@@ -3,7 +3,8 @@
 # does not deploy, because neither is in git:
 #
 #   ./deploy-private.sh                  sync private-assets/img/ (the screenshots) to the host
-#   ./deploy-private.sh --set-password   set or change the hub's password
+#   ./deploy-private.sh --set-password   set or change the hub's password (asks for it)
+#   ./deploy-private.sh --set-password --generate   same, but generates and prints one (no prompt)
 #
 # Both go to private-data/ NEXT TO public_html, not inside it: no URL reaches
 # that folder, only public/includes/private_gate.php reads it. The pages
@@ -24,8 +25,16 @@ REMOTE="www/cjnowacek.com/private-data"
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 
 if [ "${1:-}" = "--set-password" ]; then
-  read -r -s -p "New password for /private/ (empty = generate one): " PW
-  echo
+  PW=""
+  if [ "${2:-}" = "--generate" ]; then
+    : # no prompt: generate one below
+  elif [ -t 0 ]; then
+    read -r -s -p "New password for /private/ (empty = generate one): " PW
+    echo
+  else
+    echo "No terminal to type a password into. Run this in a real terminal, or add --generate to have one made and printed." >&2
+    exit 1
+  fi
   if [ -z "$PW" ]; then
     PW="$(head -c 15 /dev/urandom | base64 | tr '+/' '-_')"
     echo "Generated password (shown once, write it down):"
